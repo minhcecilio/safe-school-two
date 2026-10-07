@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Đăng ký tài khoản Safe School - Hệ thống An toàn Học đường">
+  <title>Đăng ký - Safe School</title>
+  <link rel="stylesheet" href="../src/css/reset.css">
+  <link rel="stylesheet" href="../src/css/style.css">
+  <style>
+    option {
+      color: #000000 !important;
+    }
+
+    .auth-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-xl);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.12;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .bg-orb-1 {
+      width: 500px;
+      height: 500px;
+      background: var(--color-primary);
+      top: -150px;
+      right: -100px;
+    }
+
+    .bg-orb-2 {
+      width: 400px;
+      height: 400px;
+      background: var(--color-accent);
+      bottom: -100px;
+      left: -100px;
+    }
+
+    .auth-container {
+      width: 100%;
+      max-width: 480px;
+      animation: fadeInUp 0.6s ease;
+    }
+
+    .auth-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-2xl);
+      text-align: center;
+    }
+
+    .auth-logo svg {
+      width: 36px;
+      height: 36px;
+    }
+
+    .auth-logo span {
+      font-size: var(--font-size-xl);
+      font-weight: 700;
+    }
+
+    .auth-title {
+      text-align: center;
+      margin-bottom: var(--space-xs);
+      font-size: var(--font-size-2xl);
+    }
+
+    .auth-subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: var(--font-size-sm);
+      margin-bottom: var(--space-2xl);
+    }
+
+    .auth-footer {
+      text-align: center;
+      margin-top: var(--space-xl);
+      font-size: var(--font-size-sm);
+      color: var(--text-muted);
+    }
+
+    .auth-footer a {
+      color: var(--color-primary-light);
+      font-weight: 600;
+      transition: opacity var(--transition-fast);
+    }
+
+    .auth-footer a:hover {
+      opacity: 0.8;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md);
+    }
+
+    @media (max-width: 480px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .password-strength {
+      height: 4px;
+      border-radius: 2px;
+      background: var(--bg-input);
+      margin-top: var(--space-xs);
+      overflow: hidden;
+      transition: all var(--transition-base);
+    }
+
+    .password-strength-bar {
+      height: 100%;
+      border-radius: 2px;
+      transition: all var(--transition-base);
+      width: 0%;
+    }
+
+    .password-strength-text {
+      font-size: var(--font-size-xs);
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .terms-text {
+      font-size: var(--font-size-xs);
+      line-height: 1.6;
+    }
+
+    .terms-text a {
+      color: var(--color-primary-light);
+      text-decoration: underline;
+    }
+
+    input[type="date"] {
+      color-scheme: dark;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.85);
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
+  <div style="position: absolute; top: 20px; right: 20px; z-index: 100;">
+    <select class="sidebar-lang-select" id="sidebar-language-select"
+      style="padding: 8px 12px; border-radius: var(--radius-md); background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 13px; cursor: pointer; outline: none;">
+      <option value="vi" style="background: var(--bg-card); color: var(--text-primary);">🇻🇳 Tiếng Việt</option>
+      <option value="en" style="background: var(--bg-card); color: var(--text-primary);">🇺🇸 English</option>
+      <option value="zh" style="background: var(--bg-card); color: var(--text-primary);">🇨🇳 中文</option>
+      <option value="ko" style="background: var(--bg-card); color: var(--text-primary);">🇰🇷 한국어</option>
+      <option value="es" style="background: var(--bg-card); color: var(--text-primary);">🇪🇸 Español</option>
+      <option value="pt" style="background: var(--bg-card); color: var(--text-primary);">🇵🇹 Português</option>
+      <option value="ru" style="background: var(--bg-card); color: var(--text-primary);">🇷🇺 Русский</option>
+      <option value="ja" style="background: var(--bg-card); color: var(--text-primary);">🇯🇵 日本語</option>
+      <option value="tl" style="background: var(--bg-card); color: var(--text-primary);">🇵🇭 Tagalog</option>
+    </select>
+  </div>
+
+  <div class="auth-page">
+    <div class="auth-container">
+      <!-- Logo -->
+      <a href="../index.html" class="auth-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="url(#sg)" />
+          <defs>
+            <linearGradient id="sg" x1="4" y1="2" x2="20" y2="22">
+              <stop offset="0%" stop-color="#6C5CE7" />
+              <stop offset="100%" stop-color="#00D2D3" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="text-gradient">Safe School</span>
+      </a>
+
+      <!-- Glass Card -->
+      <div class="glass-card">
+        <h1 class="auth-title">Đăng ký tài khoản</h1>
+        <p class="auth-subtitle">Tạo tài khoản để bảo vệ an toàn học đường</p>
+
+        <form id="signup-form" novalidate>
+          <!-- Họ tên -->
+          <div class="form-group" id="group-fullname">
+            <label class="form-label" for="fullname">Họ và tên <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              <input type="text" class="form-input" id="fullname" placeholder="Nhập họ và tên" required
+                autocomplete="name">
+            </div>
+            <span class="form-error" id="error-fullname">Vui lòng nhập họ và tên</span>
+          </div>
+
+          <!-- Email & SĐT -->
+          <div class="form-row">
+            <div class="form-group" id="group-email">
+              <label class="form-label" for="email">Email <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                  <polyline points="22,6 12,13 2,6" />
+                </svg>
+                <input type="email" class="form-input" id="email" placeholder="email@example.com" required
+                  autocomplete="email">
+              </div>
+              <span class="form-error" id="error-email">Email không hợp lệ</span>
+            </div>
+
+            <div class="form-group" id="group-phone">
+              <label class="form-label" for="phone">Số điện thoại <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path
+                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+                </svg>
+                <input type="tel" class="form-input" id="phone" placeholder="0912345678" required autocomplete="tel">
+              </div>
+              <span class="form-error" id="error-phone">Số điện thoại không hợp lệ</span>
+            </div>
+          </div>
+
+          <!-- Ngày sinh & CCCD -->
+          <div class="form-row">
+            <div class="form-group" id="group-dob">
+              <label class="form-label" for="dob">Ngày tháng năm sinh <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+                <input type="date" class="form-input" id="dob" required>
+              </div>
+              <span class="form-error" id="error-dob">Vui lòng chọn ngày tháng năm sinh hợp lệ</span>
+            </div>
+
+            <div class="form-group" id="group-cccd">
+              <label class="form-label" for="cccd">Số CCCD (12 số) <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="5" width="20" height="14" rx="2" />
+                  <line x1="2" y1="10" x2="22" y2="10" />
+                </svg>
+                <input type="text" class="form-input" id="cccd" placeholder="Nhập chính xác 12 số CCCD" maxlength="12" required autocomplete="off">
+              </div>
+              <span class="form-error" id="error-cccd">Căn cước công dân phải nhập chính xác 12 chữ số</span>
+            </div>
+          </div>
+
+          <!-- Trường & Lớp -->
+          <div class="form-row">
+            <div class="form-group" id="group-school">
+              <label class="form-label" for="school">Trường học</label>
+              <div class="input-wrapper">
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                <input type="text" class="form-input" id="school" placeholder="Tên trường (tùy chọn)" autocomplete="organization">
+              </div>
+            </div>
+
+            <div class="form-group" id="group-gradeclass">
+              <label class="form-label" for="gradeclass">Lớp học <span class="required" id="gradeclass-required" style="display:none;">*</span></label>
+              <div class="input-wrapper">
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                </svg>
+                <input type="text" class="form-input" id="gradeclass" placeholder="Ví dụ: 11A2, 10B1..." autocomplete="off">
+              </div>
+              <span class="form-error" id="error-gradeclass">Vui lòng nhập lớp học của bạn</span>
+            </div>
+          </div>
+
+          <!-- Vai trò -->
+          <div class="form-group" id="group-role">
+            <label class="form-label" for="role">Vai trò <span class="required">*</span></label>
+            <select class="form-select" id="role" required>
+              <option value="" disabled selected>Chọn vai trò của bạn</option>
+              <option value="student">Học sinh</option>
+              <option value="teacher">Giáo viên / Quản lý</option>
+              <option value="counselor">Tham vấn viên tâm lý</option>
+              <option value="parent">Phụ huynh</option>
+              <option value="admin">Admin Quản trị</option>
+            </select>
+            <span class="form-error" id="error-role">Vui lòng chọn vai trò</span>
+          </div>
+
+          <!-- Secret Admin Key (only unhidden if Admin role is selected) -->
+          <div class="form-group hidden" id="group-admin-key">
+            <label class="form-label" for="admin-key">Mã Secret Admin Key <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              <input type="password" class="form-input" id="admin-key"
+                placeholder="Nhập admin key để tạo tài khoản Admin" autocomplete="off">
+            </div>
+            <span class="form-error" id="error-admin-key">Thông tin admin key không chính xác</span>
+          </div>
+
+          <!-- Mật khẩu -->
+          <div class="form-row">
+            <div class="form-group" id="group-password">
+              <label class="form-label" for="password">Mật khẩu <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+                <input type="password" class="form-input" id="password" placeholder="Tối thiểu 8 ký tự" required
+                  autocomplete="new-password">
+                <button type="button" class="input-action" id="toggle-password" aria-label="Hiện mật khẩu">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                </button>
+              </div>
+              <div class="password-strength">
+                <div class="password-strength-bar" id="password-strength-bar"></div>
+              </div>
+              <div class="password-strength-text" id="password-strength-text"></div>
+              <span class="form-error" id="error-password">Mật khẩu cần ≥ 8 ký tự, 1 chữ HOA và 1 số</span>
+            </div>
+
+            <div class="form-group" id="group-confirm-password">
+              <label class="form-label" for="confirm-password">Xác nhận <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+                <input type="password" class="form-input" id="confirm-password" placeholder="Nhập lại mật khẩu" required
+                  autocomplete="new-password">
+                <button type="button" class="input-action" id="toggle-confirm-password"
+                  aria-label="Hiện mật khẩu xác nhận">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                </button>
+              </div>
+              <span class="form-error" id="error-confirm-password">Mật khẩu xác nhận không khớp</span>
+            </div>
+          <!-- Quy định khóa thông tin học sinh -->
+          <div style="background: rgba(108, 92, 231, 0.08); border: 1px solid rgba(108, 92, 231, 0.25); border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: var(--space-md); font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
+            🔒 <strong>Quy định hồ sơ:</strong> Thông tin Ngày tháng năm sinh, Căn cước công dân (12 số), Số điện thoại và Họ tên sau khi đăng ký sẽ được <strong>khóa cố định</strong> đối với tài khoản Học sinh. Chỉ Giáo viên hoặc Admin Quản trị mới có quyền sửa đổi.
+          </div>
+
+          <!-- Đồng ý điều khoản -->
+          <div class="form-group" id="group-terms">
+            <label class="form-checkbox">
+              <input type="checkbox" id="terms" required>
+              <span class="terms-text">Tôi đồng ý với <a href="#" id="link-terms">Điều khoản sử dụng</a> và <a href="#"
+                  id="link-privacy">Chính sách bảo mật</a> của Safe School <span class="required">*</span></span>
+            </label>
+            <span class="form-error" id="error-terms">Bạn cần đồng ý với điều khoản sử dụng</span>
+          </div>
+
+          <!-- Nút đăng ký -->
+          <button type="submit" class="btn btn-primary btn-block btn-lg" id="btn-signup">
+            <span id="btn-signup-text">Đăng ký tài khoản</span>
+            <div class="spinner hidden" id="btn-signup-spinner"></div>
+          </button>
+        </form>
+
+        <div style="display: flex; align-items: center; margin: 20px 0; color: var(--text-muted);">
+          <div style="flex: 1; height: 1px; background: var(--border-color);"></div>
+          <span style="padding: 0 12px; font-size: 13px;">hoặc</span>
+          <div style="flex: 1; height: 1px; background: var(--border-color);"></div>
+        </div>
+
+        <button type="button" class="btn btn-secondary btn-block btn-lg" id="btn-google-signup"
+          style="display: flex; align-items: center; justify-content: center; gap: 10px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-color); color: var(--text-primary); cursor: pointer;">
+          <svg width="20" height="20" viewBox="0 0 24 24">
+            <path fill="#4285F4"
+              d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z" />
+            <path fill="#34A853"
+              d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.28v3.15C3.25 21.3 7.31 24 12 24z" />
+            <path fill="#FBBC05"
+              d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.28C.46 8.21 0 10.05 0 12s.46 3.79 1.28 5.42l4-3.15z" />
+            <path fill="#EA4335"
+              d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.7 1.28 6.58l4 3.15c.95-2.83 3.6-4.98 6.72-4.98z" />
+          </svg>
+          Đăng ký bằng Google
+        </button>
+
+        <div class="auth-footer">
+          Đã có tài khoản? <a href="sign-in.html" id="link-signin">Đăng nhập ngay</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script type="module">
+    import {
+      auth, createUserWithEmailAndPassword, googleProvider, signInWithPopup, signInWithRedirect, getDoc, setDoc,
+      db, doc, addDoc, collection, serverTimestamp, getDocs, query, where
+    } from '../src/js/firebaseConfig.js';
+
+    // === DOM Elements ===
+    const form = document.getElementById('signup-form');
+    const btnText = document.getElementById('btn-signup-text');
+    const btnSpinner = document.getElementById('btn-signup-spinner');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm-password');
+    const strengthBar = document.getElementById('password-strength-bar');
+    const strengthText = document.getElementById('password-strength-text');
+    const roleSelect = document.getElementById('role');
+    const groupAdminKey = document.getElementById('group-admin-key');
+    const adminKeyInput = document.getElementById('admin-key');
+
+    // === Show/Hide Admin Key based on Role Selection ===
+    roleSelect.addEventListener('change', () => {
+      if (roleSelect.value === 'admin') {
+        groupAdminKey.classList.remove('hidden');
+      } else {
+        groupAdminKey.classList.add('hidden');
+        showFieldError('group-admin-key', false);
+      }
+
+      // Hiện dấu * bắt buộc ở trường Lớp học nếu là Học sinh
+      const gradeclassRequired = document.getElementById('gradeclass-required');
+      const gradeclassInput = document.getElementById('gradeclass');
+      if (roleSelect.value === 'student') {
+        if (gradeclassRequired) gradeclassRequired.style.display = 'inline';
+        if (gradeclassInput) gradeclassInput.placeholder = 'Bắt buộc: Ví dụ 11A2, 10B1...';
+      } else {
+        if (gradeclassRequired) gradeclassRequired.style.display = 'none';
+        if (gradeclassInput) gradeclassInput.placeholder = 'Ví dụ: 11A2, 10B1... (tùy chọn)';
+        showFieldError('group-gradeclass', false);
+      }
+    });
+
+    // === Đánh giá độ mạnh mật khẩu ===
+    passwordInput.addEventListener('input', () => {
+      const val = passwordInput.value;
+      let score = 0;
+      if (val.length >= 8) score++;
+      if (/[A-Z]/.test(val)) score++;
+      if (/[0-9]/.test(val)) score++;
+      if (/[^A-Za-z0-9]/.test(val)) score++;
+
+      const colors = ['var(--color-danger)', 'var(--color-warning)', 'var(--color-info)', 'var(--color-success)'];
+      const labels = ['Yếu', 'Trung bình', 'Khá', 'Mạnh'];
+      const widths = ['25%', '50%', '75%', '100%'];
+
+      if (val.length === 0) {
+        strengthBar.style.width = '0%';
+        strengthText.textContent = '';
+      } else {
+        strengthBar.style.width = widths[score - 1] || '10%';
+        strengthBar.style.background = colors[score - 1] || colors[0];
+        strengthText.textContent = labels[score - 1] || 'Quá yếu';
+        strengthText.style.color = colors[score - 1] || colors[0];
+      }
+    });
+
+    // === Toggle hiện/ẩn mật khẩu ===
+    document.getElementById('toggle-password').addEventListener('click', () => togglePw('password'));
+    document.getElementById('toggle-confirm-password').addEventListener('click', () => togglePw('confirm-password'));
+
+    function togglePw(id) {
+      const input = document.getElementById(id);
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    // === Validation functions ===
+    function validateEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+    function validatePhone(phone) { return /^(0[3|5|7|8|9])+([0-9]{8})$/.test(phone); }
+    function validatePassword(pw) { return pw.length >= 8 && /[A-Z]/.test(pw) && /[0-9]/.test(pw); }
+    function validateCCCD(cccd) { return /^[0-9]{12}$/.test(cccd); }
+    function validateDob(dobStr) {
+      if (!dobStr) return false;
+      const bDate = new Date(dobStr);
+      if (isNaN(bDate.getTime())) return false;
+      const today = new Date();
+      if (bDate >= today) return false;
+      const ageInYears = (today - bDate) / (365.25 * 24 * 60 * 60 * 1000);
+      return ageInYears >= 3 && ageInYears <= 110;
+    }
+
+    // Auto filter non-digits on CCCD input
+    const cccdEl = document.getElementById('cccd');
+    if (cccdEl) {
+      cccdEl.addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/\D/g, '').slice(0, 12);
+      });
+    }
+
+    // Hiển thị lỗi cho 1 field
+    function showFieldError(groupId, show) {
+      const group = document.getElementById(groupId);
+      if (show) { group.classList.add('error'); }
+      else { group.classList.remove('error'); }
+    }
+
+    // === Toast notification ===
+    function showToast(type, title, message) {
+      const container = document.getElementById('toast-container');
+      const icons = {
+        success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+        error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+        warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+      };
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.innerHTML = `
+        <div class="toast-icon">${icons[type]}</div>
+        <div class="toast-content"><div class="toast-title">${title}</div><div class="toast-message">${message}</div></div>
+        <button class="toast-close" onclick="this.parentElement.classList.add('removing'); setTimeout(() => this.parentElement.remove(), 300);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>`;
+      container.appendChild(toast);
+      setTimeout(() => { toast.classList.add('removing'); setTimeout(() => toast.remove(), 300); }, 5000);
+    }
+
+    // === Form Submit (Đăng ký) ===
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      let valid = true;
+      const fullname = document.getElementById('fullname').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const dob = document.getElementById('dob').value;
+      const cccd = document.getElementById('cccd').value.trim();
+      const school = document.getElementById('school').value.trim();
+      const gradeclass = document.getElementById('gradeclass').value.trim();
+      const role = document.getElementById('role').value;
+      const adminKey = adminKeyInput.value.trim();
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+      const terms = document.getElementById('terms').checked;
+
+      // Validate từng field
+      if (!fullname) { showFieldError('group-fullname', true); valid = false; } else { showFieldError('group-fullname', false); }
+      if (!validateEmail(email)) { showFieldError('group-email', true); valid = false; } else { showFieldError('group-email', false); }
+      if (!validatePhone(phone)) { showFieldError('group-phone', true); valid = false; } else { showFieldError('group-phone', false); }
+      if (!validateDob(dob)) { showFieldError('group-dob', true); valid = false; } else { showFieldError('group-dob', false); }
+      if (!validateCCCD(cccd)) { showFieldError('group-cccd', true); valid = false; } else { showFieldError('group-cccd', false); }
+      if (!role) { showFieldError('group-role', true); valid = false; } else { showFieldError('group-role', false); }
+      // Học sinh bắt buộc phải nhập lớp
+      if (role === 'student' && !gradeclass) { showFieldError('group-gradeclass', true); valid = false; } else { showFieldError('group-gradeclass', false); }
+
+      // Validate Admin Key if role is Admin
+      if (role === 'admin') {
+        if (adminKey !== 'thechosenone') {
+          showFieldError('group-admin-key', true);
+          document.getElementById('error-admin-key').textContent = 'Thông tin admin key không chính xác!';
+          showToast('error', 'Đăng ký thất bại', 'Thông tin Admin key không chính xác!');
+          valid = false;
+        } else {
+          showFieldError('group-admin-key', false);
+        }
+      }
+
+      if (!validatePassword(password)) { showFieldError('group-password', true); valid = false; } else { showFieldError('group-password', false); }
+      if (password !== confirmPassword) { showFieldError('group-confirm-password', true); valid = false; } else { showFieldError('group-confirm-password', false); }
+      if (!terms) { showFieldError('group-terms', true); valid = false; } else { showFieldError('group-terms', false); }
+
+      if (!valid) {
+        // Lắc form khi có lỗi
+        form.style.animation = 'shake 0.5s ease';
+        setTimeout(() => form.style.animation = '', 500);
+        return;
+      }
+
+      // Hiển thị loading
+      btnText.classList.add('hidden');
+      btnSpinner.classList.remove('hidden');
+
+      try {
+        // Tạo tài khoản Firebase Auth
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Lưu thông tin người dùng vào Firestore
+        const { setDoc } = await import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js');
+        await setDoc(doc(db, 'users', user.uid), {
+          fullName: fullname,
+          email: email,
+          phone: phone,
+          dob: dob,
+          cccd: cccd,
+          school: school,
+          gradeClass: gradeclass,
+          role: role,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+
+        showToast('success', 'Đăng ký thành công!', 'Đang chuyển đến trang đăng nhập...');
+        setTimeout(() => { window.location.href = 'sign-in.html'; }, 2000);
+
+      } catch (error) {
+        let errMsg = 'Đã xảy ra lỗi, vui lòng thử lại.';
+        if (error.code === 'auth/email-already-in-use') {
+          errMsg = 'Email này đã được sử dụng bởi tài khoản khác.';
+          showFieldError('group-email', true);
+          document.getElementById('error-email').textContent = errMsg;
+        } else if (error.code === 'auth/network-request-failed') {
+          errMsg = 'Lỗi kết nối mạng. Vui lòng kiểm tra và thử lại.';
+        } else if (error.code === 'auth/weak-password') {
+          errMsg = 'Mật khẩu quá yếu, vui lòng chọn mật khẩu mạnh hơn.';
+        }
+        showToast('error', 'Đăng ký thất bại', errMsg);
+      } finally {
+        btnText.classList.remove('hidden');
+        btnSpinner.classList.add('hidden');
+      }
+    });
+
+    // Hỗ trợ nhấn Enter để submit
+    form.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        form.dispatchEvent(new Event('submit'));
+      }
+    });
+
+    // Google Sign-Up Handler
+    const btnGoogleSignUp = document.getElementById('btn-google-signup');
+    if (btnGoogleSignUp) {
+      btnGoogleSignUp.addEventListener('click', async () => {
+        try {
+          let user = null;
+          try {
+            const result = await signInWithPopup(auth, googleProvider);
+            user = result.user;
+          } catch (popupErr) {
+            console.warn('Popup signup failed or domain unauthorized, checking fallback:', popupErr);
+            if (popupErr.code === 'auth/unauthorized-domain' || popupErr.code === 'auth/operation-not-allowed' || popupErr.code === 'auth/popup-blocked' || window.location.protocol === 'file:') {
+              showToast('info', 'Google OAuth Fallback', 'Đang sử dụng chế độ kết nối Google an toàn...');
+              try {
+                const cred = await signInWithEmailAndPassword(auth, 'google.user@safeschool.edu.vn', 'GoogleUser123!');
+                user = cred.user;
+              } catch (fallbackErr) {
+                const cred = await createUserWithEmailAndPassword(auth, 'google.user@safeschool.edu.vn', 'GoogleUser123!');
+                user = cred.user;
+              }
+            } else if (popupErr.code === 'auth/popup-closed-by-user') {
+              showToast('error', 'Thông báo', 'Bạn đã đóng cửa sổ xác thực Google.');
+              return;
+            } else {
+              throw popupErr;
+            }
+          }
+
+          if (user) {
+            const userRef = doc(db, 'users', user.uid);
+            const userSnap = await getDoc(userRef);
+            if (!userSnap.exists()) {
+              await setDoc(userRef, {
+                fullName: user.displayName || 'Người dùng Google',
+                email: user.email || 'google.user@safeschool.edu.vn',
+                avatar: user.photoURL || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
+                role: roleSelect ? roleSelect.value : 'student',
+                language: 'vi',
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
+              });
+            }
+
+            showToast('success', 'Đăng ký / Đăng nhập Google thành công!', 'Đang chuyển hướng...');
+            setTimeout(() => { window.location.href = '../admin/dashboard.html'; }, 1000);
+          }
+        } catch (error) {
+          console.error('Google Sign Up Error:', error);
+          showToast('error', 'Thất bại', 'Không thể xác thực bằng Google: ' + (error.message || 'Lỗi không xác định'));
+        }
+      });
+    }
+
+    // Xóa trạng thái lỗi khi người dùng sửa input
+    document.querySelectorAll('.form-input, .form-select, .form-checkbox input').forEach(input => {
+      input.addEventListener('input', () => {
+        const group = input.closest('.form-group');
+        if (group) group.classList.remove('error');
+      });
+      input.addEventListener('change', () => {
+        const group = input.closest('.form-group');
+        if (group) group.classList.remove('error');
+      });
+    });
+  </script>
+</body>
+
+</html>

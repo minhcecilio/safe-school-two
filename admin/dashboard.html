@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thống Kê Số Liệu Hệ Thống - Safe School Admin</title>
+  <link rel="stylesheet" href="../src/css/reset.css">
+  <link rel="stylesheet" href="../src/css/style.css">
+  <style>
+    .dashboard-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--space-lg);
+      margin-bottom: var(--space-2xl);
+    }
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-lg);
+      margin-bottom: var(--space-2xl);
+    }
+    @media (max-width: 992px) {
+      .analytics-grid { grid-template-columns: 1fr; }
+    }
+    .progress-bar-bg {
+      width: 100%;
+      height: 10px;
+      background: rgba(255,255,255,0.08);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      transition: width 0.6s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="sidebar-logo-text">
+          Safe School
+          <span>Admin Portal</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section-title">QUẢN LÝ CHUNG</div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="sidebar-link active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Thống kê Số liệu
+        </a>
+        <a href="../pages/blogs.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          Bài tuyên truyền
+        </a>
+        <a href="../pages/chat.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Tư vấn tâm lý 💬
+        </a>
+        <a href="../pages/report.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Gửi Báo cáo
+        </a>
+        <a href="../pages/report-sos.html" class="sidebar-link text-danger">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-danger)"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Báo cáo khẩn cấp
+        </a>
+      </nav>
+
+      <div class="sidebar-section-title">QUẢN LÝ</div>
+      <nav class="sidebar-nav">
+        <a href="../pages/users.html" class="sidebar-link" id="nav-users-management">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Quản lý Người dùng
+        </a>
+        <a href="../pages/chat-management.html" class="sidebar-link" id="nav-chat-management">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Quản lý Chat
+        </a>
+      </nav>
+
+      <div class="sidebar-section-title">CÁ NHÂN</div>
+      <nav class="sidebar-nav">
+        <a href="../pages/profile.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Hồ sơ cá nhân
+        </a>
+      </nav>
+
+      <div class="sidebar-section-title">NGÔN NGỮ / LANGUAGE</div>
+      <div style="padding: 0 var(--space-md); margin-bottom: var(--space-md);">
+        <select class="sidebar-lang-select" id="sidebar-language-select" style="width: 100%; padding: 8px 10px; border-radius: var(--radius-md); background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 13px; cursor: pointer; outline: none;">
+          <option value="vi" style="background: var(--bg-card); color: var(--text-primary);">🇻🇳 Tiếng Việt</option>
+          <option value="en" style="background: var(--bg-card); color: var(--text-primary);">🇺🇸 English</option>
+          <option value="zh" style="background: var(--bg-card); color: var(--text-primary);">🇨🇳 中文</option>
+          <option value="ko" style="background: var(--bg-card); color: var(--text-primary);">🇰🇷 한국어</option>
+          <option value="es" style="background: var(--bg-card); color: var(--text-primary);">🇪🇸 Español</option>
+          <option value="pt" style="background: var(--bg-card); color: var(--text-primary);">🇵🇹 Português</option>
+          <option value="ru" style="background: var(--bg-card); color: var(--text-primary);">🇷🇺 Русский</option>
+          <option value="ja" style="background: var(--bg-card); color: var(--text-primary);">🇯🇵 日本語</option>
+          <option value="tl" style="background: var(--bg-card); color: var(--text-primary);">🇵🇭 Tagalog</option>
+        </select>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-avatar" id="user-avatar-initial">U</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name" id="sidebar-user-name">Đang tải...</div>
+            <div class="sidebar-user-role" id="sidebar-user-role">---</div>
+          </div>
+          <button class="btn-icon" id="btn-logout" title="Đăng xuất">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="page-header flex items-center justify-between">
+        <div>
+          <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <h1 class="page-title" id="dashboard-page-title">Bảng Thống Kê Số Liệu Hệ Thống</h1>
+          <p class="page-subtitle" id="dashboard-page-subtitle">Báo cáo tổng hợp số liệu bạo lực học đường, tiến độ xử lý và thống kê người dùng (Chỉ dành cho Admin)</p>
+        </div>
+        <div>
+          <div class="badge badge-primary" style="padding: 6px 14px; font-size: 13px;">🛡️ Admin Security Access</div>
+        </div>
+      </header>
+
+      <!-- Access Denied Card (Hidden by default, shown if non-admin) -->
+      <div id="access-denied-view" class="card" style="display: none; text-align: center; padding: 50px 20px; max-width: 600px; margin: 40px auto; border-color: var(--color-danger);">
+        <div style="font-size: 48px; margin-bottom: 16px;">🚫</div>
+        <h2 style="color: var(--color-danger); margin-bottom: 12px;">Quyền Truy Cập Bị Từ Chối</h2>
+        <p style="color: var(--text-muted); margin-bottom: 24px;">Trang Thống kê Số liệu Tổng quan hệ thống chỉ dành riêng cho tài khoản có vai trò <strong>Admin Quản trị</strong>.</p>
+        <a href="../pages/blogs.html" class="btn btn-primary">Quay lại Trang Chủ / Cộng Đồng</a>
+      </div>
+
+      <!-- Admin Main Content View -->
+      <div id="admin-dashboard-view">
+        <!-- Key Stats Cards -->
+        <div class="dashboard-stats stagger">
+          <div class="stat-card">
+            <div class="stat-icon" style="background: var(--color-primary-light); color: var(--color-primary-dark);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            </div>
+            <div class="stat-value" id="stat-total-reports">0</div>
+            <div class="stat-label">Tổng số báo cáo / vụ việc</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="background: var(--color-warning-light); color: var(--color-warning);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="stat-value" id="stat-pending-reports">0</div>
+            <div class="stat-label">Vụ việc đang chờ xử lý</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="background: var(--color-danger-light); color: var(--color-danger);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="stat-value" id="stat-sos-reports">0</div>
+            <div class="stat-label">Khẩn cấp (SOS)</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="background: var(--color-success-light); color: var(--color-success);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="stat-value" id="stat-resolved-reports">0</div>
+            <div class="stat-label">Đã giải quyết dứt điểm</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(168, 85, 247, 0.15); color: #a855f7;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="stat-value" id="stat-total-users">0</div>
+            <div class="stat-label">Tổng số người dùng</div>
+          </div>
+        </div>
+
+        <!-- Analytics Visual Charts & Progress Breakdown Grid -->
+        <div class="analytics-grid">
+          <!-- Incident Category Breakdown -->
+          <div class="card">
+            <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+              📊 Phân Loại Vụ Việc Theo Thể Loại
+            </h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                  <span>💥 Bạo lực thể chất</span>
+                  <span id="pct-physical" style="font-weight: 600;">0%</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-physical" style="width: 0%; background: #e74c3c;"></div></div>
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                  <span>🌐 Bắt nạt không gian mạng (Cyberbullying)</span>
+                  <span id="pct-cyber" style="font-weight: 600;">0%</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-cyber" style="width: 0%; background: #3498db;"></div></div>
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                  <span>🗣️ Bạo lực ngôn từ & Xúc phạm</span>
+                  <span id="pct-verbal" style="font-weight: 600;">0%</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-verbal" style="width: 0%; background: #f1c40f;"></div></div>
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                  <span>🧠 Sức khỏe tâm lý & Khác</span>
+                  <span id="pct-mental" style="font-weight: 600;">0%</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-mental" style="width: 0%; background: #9b59b6;"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- User Roles Breakdown & Resolution Status -->
+          <div class="card">
+            <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+              📈 Tiến Độ Xử Lý & Cơ Cấu Người Dùng
+            </h3>
+
+            <div style="margin-bottom: 20px;">
+              <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                <span>Tỷ lệ giải quyết sự việc</span>
+                <span id="pct-resolved-rate" style="font-weight: 700; color: #2ecc71;">0%</span>
+              </div>
+              <div class="progress-bar-bg" style="height: 14px;"><div class="progress-bar-fill" id="bar-resolved-rate" style="width: 0%; background: #2ecc71;"></div></div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px;">
+              <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 12px;">
+                <div style="font-size: 12px; color: var(--text-muted);">🎓 Học sinh</div>
+                <div style="font-size: 20px; font-weight: 700; margin-top: 4px;" id="count-role-student">0</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 12px;">
+                <div style="font-size: 12px; color: var(--text-muted);">👩‍🏫 Giáo viên / Cố vấn</div>
+                <div style="font-size: 20px; font-weight: 700; margin-top: 4px;" id="count-role-teacher">0</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 12px;">
+                <div style="font-size: 12px; color: var(--text-muted);">🤝 Tham vấn viên tâm lý</div>
+                <div style="font-size: 20px; font-weight: 700; margin-top: 4px;" id="count-role-counselor">0</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 12px;">
+                <div style="font-size: 12px; color: var(--text-muted);">⚙️ Admin Quản trị</div>
+                <div style="font-size: 20px; font-weight: 700; margin-top: 4px;" id="count-role-admin">0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Reports Table -->
+        <div class="card recent-reports animate-fade-in-up" style="animation-delay: 0.4s;">
+          <div class="card-header">
+            <h2 class="card-title" id="dashboard-card-title">Danh Sách Sự Việc & Báo Cáo Gần Đây</h2>
+          </div>
+          <div class="table-wrapper" style="overflow-x: auto;">
+            <table class="table" style="width: 100%;">
+              <thead>
+                <tr>
+                  <th>Mã báo cáo</th>
+                  <th>Loại sự việc</th>
+                  <th>Người gửi</th>
+                  <th>Thời gian</th>
+                  <th>Trạng thái</th>
+                  <th style="text-align: right;">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="recent-reports-table">
+                <tr>
+                  <td colspan="6" class="text-center" style="padding: 30px;">
+                    <div class="spinner" style="margin: 0 auto;"></div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script type="module">
+    import { auth, db, signOut, doc, getDoc, collection, query, orderBy, limit, onSnapshot, getDocs, onAuthStateChanged } from '../src/js/firebaseConfig.js';
+
+    const sidebar = document.getElementById('sidebar');
+    const mobileToggle = document.getElementById('mobile-menu-toggle');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    const btnLogout = document.getElementById('btn-logout');
+
+    mobileToggle.addEventListener('click', () => {
+      sidebar.classList.add('open');
+      sidebarOverlay.classList.add('active');
+    });
+
+    sidebarOverlay.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      sidebarOverlay.classList.remove('active');
+    });
+
+    let currentUserId = null;
+    let currentUserRole = null;
+
+    // === Check Admin Authentication ===
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUserId = user.uid;
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          currentUserRole = userData.role || 'student';
+
+          document.getElementById('sidebar-user-name').textContent = userData.fullName || 'Người dùng';
+          const initialEl = document.getElementById('user-avatar-initial');
+          if (initialEl) initialEl.textContent = userData.fullName ? userData.fullName.charAt(0).toUpperCase() : 'U';
+          
+          let roleName = 'Học sinh';
+          if (userData.role === 'admin') roleName = 'Quản trị viên';
+          else if (userData.role === 'teacher') roleName = 'Giáo viên';
+          else if (userData.role === 'counselor') roleName = 'Tham vấn viên';
+          else if (userData.role === 'parent') roleName = 'Phụ huynh';
+          document.getElementById('sidebar-user-role').textContent = roleName;
+
+          if (userData.avatar) {
+            const sidebarAvatar = document.querySelector('.sidebar-user .sidebar-avatar');
+            if (sidebarAvatar) {
+              sidebarAvatar.style.backgroundImage = 'url(' + userData.avatar + ')';
+              sidebarAvatar.style.backgroundSize = 'cover';
+              sidebarAvatar.style.backgroundPosition = 'center';
+            }
+            if (initialEl) initialEl.style.display = 'none';
+          }
+        } else {
+          currentUserRole = 'student';
+        }
+
+        // STRICT ACCESS CONTROL FOR ADMIN
+        if (currentUserRole !== 'admin') {
+          document.getElementById('admin-dashboard-view').style.display = 'none';
+          document.getElementById('access-denied-view').style.display = 'block';
+          return;
+        }
+
+        document.getElementById('admin-dashboard-view').style.display = 'block';
+        document.getElementById('access-denied-view').style.display = 'none';
+
+        // Load Real Time Analytics Data
+        loadAdminAnalytics();
+
+      } else {
+        window.location.href = '../auth/sign-in.html';
+      }
+    });
+
+    btnLogout.addEventListener('click', async () => {
+      try {
+        await signOut(auth);
+        window.location.href = '../index.html';
+      } catch (error) {
+        console.error('Lỗi đăng xuất:', error);
+      }
+    });
+
+    async function loadAdminAnalytics() {
+      // 1. Fetch Users Statistics
+      try {
+        const usersSnap = await getDocs(collection(db, 'users'));
+        let totalUsers = usersSnap.size || 0;
+        let cStudent = 0, cTeacher = 0, cCounselor = 0, cAdmin = 0;
+
+        usersSnap.forEach(d => {
+          const r = d.data().role || 'student';
+          if (r === 'student') cStudent++;
+          else if (r === 'teacher') cTeacher++;
+          else if (r === 'counselor') cCounselor++;
+          else if (r === 'admin') cAdmin++;
+        });
+
+        document.getElementById('stat-total-users').textContent = totalUsers;
+        document.getElementById('count-role-student').textContent = cStudent;
+        document.getElementById('count-role-teacher').textContent = cTeacher;
+        document.getElementById('count-role-counselor').textContent = cCounselor;
+        document.getElementById('count-role-admin').textContent = cAdmin;
+      } catch (err) {
+        console.error('Lỗi tải người dùng stats:', err);
+      }
+
+      // 2. Fetch Reports Real-Time Stats
+      const q = query(collection(db, 'reports'), orderBy('createdAt', 'desc'), limit(200));
+      
+      onSnapshot(q, (snapshot) => {
+        let total = 0;
+        let pending = 0;
+        let sos = 0;
+        let resolved = 0;
+        let physicalCount = 0, cyberCount = 0, verbalCount = 0, mentalCount = 0;
+
+        const reports = [];
+
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          data._id = docSnap.id;
+          reports.push(data);
+          total++;
+          
+          if (data.status === 'pending') pending++;
+          if (data.status === 'resolved') resolved++;
+          if (data.isSOS) sos++;
+
+          if (data.type === 'physical') physicalCount++;
+          else if (data.type === 'cyber') cyberCount++;
+          else if (data.type === 'verbal') verbalCount++;
+          else mentalCount++;
+        });
+
+        document.getElementById('stat-total-reports').textContent = total;
+        document.getElementById('stat-pending-reports').textContent = pending;
+        document.getElementById('stat-sos-reports').textContent = sos;
+        document.getElementById('stat-resolved-reports').textContent = resolved;
+
+        // Progress bar calculations
+        const safeTotal = total || 1;
+        const pPhysical = Math.round((physicalCount / safeTotal) * 100);
+        const pCyber = Math.round((cyberCount / safeTotal) * 100);
+        const pVerbal = Math.round((verbalCount / safeTotal) * 100);
+        const pMental = Math.round((mentalCount / safeTotal) * 100);
+        const pResolvedRate = Math.round((resolved / safeTotal) * 100);
+
+        document.getElementById('pct-physical').textContent = pPhysical + '%';
+        document.getElementById('bar-physical').style.width = pPhysical + '%';
+
+        document.getElementById('pct-cyber').textContent = pCyber + '%';
+        document.getElementById('bar-cyber').style.width = pCyber + '%';
+
+        document.getElementById('pct-verbal').textContent = pVerbal + '%';
+        document.getElementById('bar-verbal').style.width = pVerbal + '%';
+
+        document.getElementById('pct-mental').textContent = pMental + '%';
+        document.getElementById('bar-mental').style.width = pMental + '%';
+
+        document.getElementById('pct-resolved-rate').textContent = pResolvedRate + '%';
+        document.getElementById('bar-resolved-rate').style.width = pResolvedRate + '%';
+
+        // Update Table
+        const tbody = document.getElementById('recent-reports-table');
+        if (reports.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="text-center" style="padding: 30px;">Chưa có báo cáo nào trong hệ thống.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = reports.slice(0, 15).map(r => {
+          let dateStr = '---';
+          if (r.createdAt && r.createdAt.toDate) {
+            const date = r.createdAt.toDate();
+            dateStr = date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'});
+          }
+
+          let statusText = r.status === 'pending' ? 'Chờ xử lý' : 'Đã giải quyết';
+          let statusClass = r.status === 'pending' ? 'badge-warning' : 'badge-success';
+          let typeText = r.isSOS ? 'Khẩn cấp (SOS)' : (r.type === 'physical' ? 'Bạo lực thể chất' : (r.type === 'verbal' ? 'Bạo lực ngôn từ' : (r.type === 'cyber' ? 'Bắt nạt trực tuyến' : 'Tâm lý / Khác')));
+          if(r.isSOS) statusClass = 'badge-danger';
+
+          let senderText = r.isAnonymous ? 'Ẩn danh' : (r.senderName || 'Đã định danh');
+
+          return `
+            <tr>
+              <td><span style="font-family: monospace; font-weight: 600;">${r.reportCode || 'N/A'}</span></td>
+              <td>${typeText}</td>
+              <td>${senderText}</td>
+              <td>${dateStr}</td>
+              <td><span class="badge ${statusClass}">${statusText}</span></td>
+              <td style="text-align: right;">
+                <a href="../pages/report-detail.html?id=${r._id}" class="btn btn-ghost btn-sm">Chi tiết</a>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }, (error) => {
+        console.error("Lỗi khi tải dữ liệu báo cáo Admin:", error);
+      });
+    }
+  </script>
+</body>
+</html>

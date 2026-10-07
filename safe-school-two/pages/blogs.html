@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài tuyên truyền - Safe School</title>
+  <link rel="stylesheet" href="../src/css/reset.css">
+  <link rel="stylesheet" href="../src/css/style.css">
+  <style>
+    .word-btn {
+      padding: 4px 7px;
+      border-radius: 4px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      font-size: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 26px;
+      height: 26px;
+      transition: all 0.2s ease;
+    }
+    .word-btn:hover {
+      background: var(--color-primary);
+      color: #fff;
+      border-color: var(--color-primary);
+    }
+    #post-content-editor:empty:before {
+      content: attr(placeholder);
+      color: var(--text-muted);
+      pointer-events: none;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar cho khách (sẽ ẩn nếu đã đăng nhập) -->
+  <nav class="navbar" id="public-navbar">
+    <a href="../index.html" class="navbar-brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="url(#sg2)"/>
+        <defs><linearGradient id="sg2" x1="4" y1="2" x2="20" y2="22"><stop offset="0%" stop-color="#6C5CE7"/><stop offset="100%" stop-color="#00D2D3"/></linearGradient></defs>
+      </svg>
+      <span class="text-gradient">Safe School</span>
+    </a>
+    <div class="navbar-actions" style="display: flex; align-items: center; gap: 10px;">
+      <select class="sidebar-lang-select" id="sidebar-language-select" style="padding: 6px 10px; border-radius: var(--radius-md); background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 13px; cursor: pointer; outline: none;">
+        <option value="vi" style="background: var(--bg-card); color: var(--text-primary);">🇻🇳 Tiếng Việt</option>
+        <option value="en" style="background: var(--bg-card); color: var(--text-primary);">🇺🇸 English</option>
+        <option value="zh" style="background: var(--bg-card); color: var(--text-primary);">🇨🇳 中文</option>
+        <option value="ko" style="background: var(--bg-card); color: var(--text-primary);">🇰🇷 한국어</option>
+        <option value="es" style="background: var(--bg-card); color: var(--text-primary);">🇪🇸 Español</option>
+        <option value="pt" style="background: var(--bg-card); color: var(--text-primary);">🇵🇹 Português</option>
+        <option value="ru" style="background: var(--bg-card); color: var(--text-primary);">🇷🇺 Русский</option>
+        <option value="ja" style="background: var(--bg-card); color: var(--text-primary);">🇯🇵 日本語</option>
+        <option value="tl" style="background: var(--bg-card); color: var(--text-primary);">🇵🇭 Tagalog</option>
+      </select>
+      <a href="../auth/sign-in.html" class="btn btn-ghost btn-sm">Đăng nhập</a>
+      <a href="../auth/sign-up.html" class="btn btn-primary btn-sm">Đăng ký</a>
+    </div>
+  </nav>
+
+  <div class="app-layout" id="app-layout">
+    <!-- Sidebar cho user đã đăng nhập (sẽ ẩn nếu là khách) -->
+    <aside class="sidebar" id="sidebar" style="display: none;">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="sidebar-logo-text">
+          Safe School
+          <span>Hệ thống</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="../admin/dashboard.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </a>
+        <a href="blogs.html" class="sidebar-link active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          Bài tuyên truyền
+        </a>
+        <a href="chat.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Tư vấn tâm lý 💬
+        </a>
+        <a href="report.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Gửi Báo cáo
+        </a>
+        <a href="report-sos.html" class="sidebar-link text-danger">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-danger)"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Báo cáo khẩn cấp
+        </a>
+      </nav>
+      
+      <div class="sidebar-section-title">QUẢN LÝ</div>
+      <nav class="sidebar-nav">
+        <a href="users.html" class="sidebar-link" id="nav-users-management" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Quản lý Người dùng
+        </a>
+        <a href="chat-management.html" class="sidebar-link" id="nav-chat-management" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Quản lý Chat
+        </a>
+      </nav>
+
+      <div class="sidebar-section-title">CÁ NHÂN</div>
+      <nav class="sidebar-nav">
+        <a href="profile.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Hồ sơ cá nhân
+        </a>
+      </nav>
+
+      <div class="sidebar-section-title">NGÔN NGỮ / LANGUAGE</div>
+      <div style="padding: 0 var(--space-md); margin-bottom: var(--space-md);">
+        <select class="sidebar-lang-select" id="sidebar-language-select" style="width: 100%; padding: 8px 10px; border-radius: var(--radius-md); background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 13px; cursor: pointer; outline: none;">
+          <option value="vi" style="background: var(--bg-card); color: var(--text-primary);">🇻🇳 Tiếng Việt</option>
+          <option value="en" style="background: var(--bg-card); color: var(--text-primary);">🇺🇸 English</option>
+          <option value="zh" style="background: var(--bg-card); color: var(--text-primary);">🇨🇳 中文</option>
+          <option value="ko" style="background: var(--bg-card); color: var(--text-primary);">🇰🇷 한국어</option>
+          <option value="es" style="background: var(--bg-card); color: var(--text-primary);">🇪🇸 Español</option>
+          <option value="pt" style="background: var(--bg-card); color: var(--text-primary);">🇵🇹 Português</option>
+          <option value="ru" style="background: var(--bg-card); color: var(--text-primary);">🇷🇺 Русский</option>
+          <option value="ja" style="background: var(--bg-card); color: var(--text-primary);">🇯🇵 日本語</option>
+          <option value="tl" style="background: var(--bg-card); color: var(--text-primary);">🇵🇭 Tagalog</option>
+        </select>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-avatar" id="user-avatar-initial">U</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name" id="sidebar-user-name">Đang tải...</div>
+            <div class="sidebar-user-role" id="sidebar-user-role">---</div>
+          </div>
+          <button class="btn-icon" id="btn-logout" title="Đăng xuất">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Main Content -->
+    <main class="main-content" id="main-content">
+      <header class="page-header flex items-center justify-between">
+        <div>
+          <button class="mobile-menu-toggle" id="mobile-menu-toggle" style="display: none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <h1 class="page-title" id="page-feed-title">Cộng Đồng Safe School</h1>
+          <p class="page-subtitle" id="page-feed-subtitle">Góc chia sẻ dành cho học sinh & bài tuyên truyền an toàn học đường</p>
+        </div>
+        <button class="btn btn-primary" id="btn-create-post">+ Đăng bài viết</button>
+      </header>
+
+      <!-- Tab Navigation: Góc Chia Sẻ vs Bài Tuyên Truyền -->
+      <div style="display: flex; gap: 12px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+        <button class="tab-feed-btn active" id="tab-sharing-corner" style="padding: 10px 20px; border-radius: var(--radius-lg); background: var(--color-primary); color: #fff; border: none; font-weight: 600; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+          💬 Góc Chia Sẻ (Học Sinh)
+        </button>
+        <button class="tab-feed-btn" id="tab-propaganda" style="padding: 10px 20px; border-radius: var(--radius-lg); background: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border-color); font-weight: 600; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+          📚 Bài Tuyên Truyền (Giáo Viên / Admin)
+        </button>
+      </div>
+
+      <!-- Quick Composer Box (Facebook Style - góc chia sẻ) -->
+      <div id="quick-composer-card" class="glass-card" style="margin-bottom: 24px; padding: 20px; border-radius: var(--radius-xl); background: var(--bg-card); border: 1px solid var(--border-color);">
+        <div style="display: flex; align-items: flex-start; gap: 14px;">
+          <div class="sidebar-avatar" id="composer-user-avatar" style="width: 44px; height: 44px; font-size: 18px; font-weight: 700; flex-shrink: 0; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff;">U</div>
+          <div style="flex: 1;">
+            <textarea id="composer-text-input" class="form-input" rows="2" placeholder="Bạn muốn chia sẻ điều gì với cộng đồng hôm nay?..." style="width: 100%; border-radius: var(--radius-lg); resize: vertical; padding: 12px; background: rgba(0,0,0,0.2);"></textarea>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; flex-wrap: wrap; gap: 10px;">
+              <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <label id="composer-img-label" for="composer-image-file" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; font-size: 12px; border-radius: var(--radius-md); background: var(--bg-glass); border: 1px solid var(--border-color); color: var(--text-muted); cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--color-primary)';this.style.color='var(--color-primary)'" onmouseout="this.style.borderColor='var(--border-color)';this.style.color='var(--text-muted)'">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  Thêm ảnh
+                </label>
+                <input type="file" id="composer-image-file" accept="image/*" style="display:none;">
+                <select id="composer-category-select" class="form-select" style="padding: 6px 12px; font-size: 12px;">
+                  <option value="sharing">💬 Tâm sự / Chia sẻ</option>
+                  <option value="blhd">Phòng chống BLHD</option>
+                  <option value="cyber_safety">An toàn mạng</option>
+                  <option value="mental_health">Sức khỏe tâm lý</option>
+                </select>
+              </div>
+              <button class="btn btn-primary btn-sm" id="btn-quick-post-submit">Đăng bài ngay 🚀</button>
+            </div>
+          </div>
+        </div>
+        <!-- Composer Image Preview -->
+        <div id="composer-img-preview" style="display:none; margin-top: 12px; position: relative; border-radius: var(--radius-lg); overflow: hidden; max-height: 200px;">
+          <img id="composer-img-preview-img" src="" alt="Preview" style="width: 100%; object-fit: cover; max-height: 200px; display: block; border-radius: var(--radius-lg);">
+          <button type="button" onclick="document.getElementById('composer-image-file').value=''; document.getElementById('composer-img-preview').style.display='none'; document.getElementById('composer-img-label').innerHTML='<svg width=\'14\' height=\'14\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/><circle cx=\'8.5\' cy=\'8.5\' r=\'1.5\'/><polyline points=\'21 15 16 10 5 21\'/></svg> Thêm ảnh';" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); border: none; color: #fff; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px;">×</button>
+        </div>
+      </div>
+
+      <!-- Search & Filter -->
+      <div class="search-filter-bar animate-fade-in-up" style="animation-delay: 0.1s; margin-bottom: 20px;">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" class="form-input" id="search-input" placeholder="Tìm kiếm bài viết...">
+        </div>
+        <div class="filter-chips" id="filter-chips">
+          <div class="filter-chip active" data-filter="all">Tất cả</div>
+          <div class="filter-chip" data-filter="sharing">Góc chia sẻ</div>
+          <div class="filter-chip" data-filter="blhd">Phòng chống BLHD</div>
+          <div class="filter-chip" data-filter="cyber_safety">An toàn không gian mạng</div>
+          <div class="filter-chip" data-filter="mental_health">Sức khỏe tâm lý</div>
+          <div class="filter-chip" data-filter="law">Góc pháp luật</div>
+        </div>
+      </div>
+
+      <!-- Blogs Grid -->
+      <div class="blog-grid stagger" id="blogs-container">
+        <!-- Mock Data Loading -->
+        <div class="empty-state" id="loading-state" style="grid-column: 1 / -1;">
+          <div class="spinner spinner-lg" style="margin: 0 auto 20px;"></div>
+          <p>Đang tải bài viết...</p>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="app-footer">
+        <div class="app-footer-inner">
+          <div class="app-footer-top">
+            <div>
+              <div class="app-footer-brand">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span class="text-gradient">Safe School</span>
+              </div>
+              <p class="app-footer-desc">Hệ thống An toàn Học đường — Bảo vệ quyền lợi và sức khỏe tinh thần của mọi học sinh.</p>
+            </div>
+            <div>
+              <h4 class="app-footer-heading">Liên kết</h4>
+              <div class="app-footer-links">
+                <a href="blogs.html">Bài tuyên truyền</a>
+                <a href="chat.html">Tư vấn tâm lý</a>
+                <a href="report.html">Gửi báo cáo</a>
+              </div>
+            </div>
+            <div>
+              <h4 class="app-footer-heading">Hỗ trợ</h4>
+              <div class="app-footer-links">
+                <a href="#">Điều khoản sử dụng</a>
+                <a href="#">Chính sách bảo mật</a>
+                <a href="#">Liên hệ hỗ trợ</a>
+              </div>
+            </div>
+          </div>
+          <div class="app-footer-bottom">
+            <span class="app-footer-copyright">© 2026 Safe School — Hệ thống An toàn Học đường</span>
+            <div class="app-footer-socials">
+              <a href="#" title="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+              <a href="#" title="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>
+              <a href="#" title="Hotline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></a>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- Modal Create Post -->
+  <div id="modal-post" class="modal-overlay hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000;">
+    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: var(--space-2xl); width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; position: relative;">
+      <h3 id="modal-post-title" style="margin-bottom: var(--space-lg);">Đăng bài viết tuyên truyền mới</h3>
+      <form id="form-create-post">
+        <div class="form-group">
+          <label class="form-label" for="post-title">📌 Tiêu đề bài viết (Header / Title) <span class="required">*</span></label>
+          <input type="text" class="form-input" id="post-title" required placeholder="Nhập tiêu đề bài viết...">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="post-category">📁 Danh mục chủ đề <span class="required">*</span></label>
+          <select class="form-select" id="post-category" required>
+            <option value="blhd">Phòng chống BLHD</option>
+            <option value="cyber_safety">An toàn không gian mạng</option>
+            <option value="mental_health">Sức khỏe tâm lý</option>
+            <option value="law">Góc pháp luật</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="post-summary">📝 Mô tả tóm tắt (Description) <span class="required">*</span></label>
+          <textarea class="form-input" id="post-summary" rows="2" required placeholder="Nhập mô tả tóm tắt ngắn 1-2 câu..."></textarea>
+        </div>
+
+        <!-- Trình soạn thảo MS Word -->
+        <div class="form-group">
+          <label class="form-label">📄 Nội dung chi tiết (Trình soạn thảo kiểu Microsoft Word) <span class="required">*</span></label>
+          <div class="word-editor-box" style="border: 1px solid var(--border-color); border-radius: var(--radius-lg); overflow: hidden; background: var(--bg-card);">
+            <!-- Toolbar -->
+            <div class="word-toolbar" style="display: flex; flex-wrap: wrap; gap: 4px; padding: 8px; background: rgba(0,0,0,0.3); border-bottom: 1px solid var(--border-color); align-items: center;">
+              <!-- Font -->
+              <select onchange="execCmd('fontName', this.value)" style="padding: 4px 6px; border-radius: 4px; background: var(--bg-glass); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 12px; outline: none; cursor: pointer;">
+                <option value="Inter, sans-serif">Mặc định (Inter)</option>
+                <option value="Arial, sans-serif">Arial</option>
+                <option value="'Times New Roman', serif">Times New Roman</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="'Courier New', monospace">Courier New</option>
+                <option value="Tahoma, sans-serif">Tahoma</option>
+              </select>
+
+              <!-- Format / Size -->
+              <select onchange="execCmd('formatBlock', this.value)" style="padding: 4px 6px; border-radius: 4px; background: var(--bg-glass); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 12px; outline: none; cursor: pointer;">
+                <option value="p">Đoạn văn (Normal)</option>
+                <option value="h1">Header 1 (Tiêu đề lớn)</option>
+                <option value="h2">Header 2 (Tiêu đề vừa)</option>
+                <option value="h3">Header 3 (Mục nhỏ)</option>
+                <option value="blockquote">Trích dẫn (Quote)</option>
+              </select>
+
+              <div style="width: 1px; height: 20px; background: var(--border-color); margin: 0 2px;"></div>
+
+              <!-- Styles -->
+              <button type="button" class="word-btn" onclick="execCmd('bold')" title="In đậm (Bold)"><b style="font-size: 13px;">B</b></button>
+              <button type="button" class="word-btn" onclick="execCmd('italic')" title="In nghiêng (Italic)"><i style="font-size: 13px;">I</i></button>
+              <button type="button" class="word-btn" onclick="execCmd('underline')" title="Gạch chân (Underline)"><u style="font-size: 13px;">U</u></button>
+              <button type="button" class="word-btn" onclick="execCmd('strikeThrough')" title="Gạch ngang (Strikethrough)"><s style="font-size: 13px;">S</s></button>
+
+              <div style="width: 1px; height: 20px; background: var(--border-color); margin: 0 2px;"></div>
+
+              <!-- Alignment -->
+              <button type="button" class="word-btn" onclick="execCmd('justifyLeft')" title="Căn trái">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+              </button>
+              <button type="button" class="word-btn" onclick="execCmd('justifyCenter')" title="Căn giữa">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/></svg>
+              </button>
+              <button type="button" class="word-btn" onclick="execCmd('justifyRight')" title="Căn phải">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg>
+              </button>
+              <button type="button" class="word-btn" onclick="execCmd('justifyFull')" title="Căn đều 2 bên">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="3" y2="18"/></svg>
+              </button>
+
+              <div style="width: 1px; height: 20px; background: var(--border-color); margin: 0 2px;"></div>
+
+              <!-- Colors -->
+              <label class="word-btn" title="Màu chữ" style="display: inline-flex; align-items: center; gap: 2px; cursor: pointer;">
+                <span style="font-weight: 800; color: var(--color-primary); font-size: 13px;">A</span>
+                <input type="color" onchange="execCmd('foreColor', this.value)" style="width: 14px; height: 14px; border: none; background: none; cursor: pointer; padding: 0;">
+              </label>
+
+              <label class="word-btn" title="Màu tô nền chữ (Highlight)" style="display: inline-flex; align-items: center; gap: 2px; cursor: pointer;">
+                <span style="background: #eab308; color: #000; padding: 0 3px; font-weight: 800; font-size: 11px; border-radius: 2px;">H</span>
+                <input type="color" value="#ffff00" onchange="execCmd('hiliteColor', this.value)" style="width: 14px; height: 14px; border: none; background: none; cursor: pointer; padding: 0;">
+              </label>
+
+              <div style="width: 1px; height: 20px; background: var(--border-color); margin: 0 2px;"></div>
+
+              <!-- Lists -->
+              <button type="button" class="word-btn" onclick="execCmd('insertUnorderedList')" title="Danh sách chấm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              </button>
+              <button type="button" class="word-btn" onclick="execCmd('insertOrderedList')" title="Danh sách số">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4"/><path d="M4 10h2"/></svg>
+              </button>
+
+              <div style="width: 1px; height: 20px; background: var(--border-color); margin: 0 2px;"></div>
+
+              <!-- Undo/Redo/Clear -->
+              <button type="button" class="word-btn" onclick="execCmd('undo')" title="Hoàn tác (Undo)">↩</button>
+              <button type="button" class="word-btn" onclick="execCmd('redo')" title="Làm lại (Redo)">↪</button>
+              <button type="button" class="word-btn" onclick="execCmd('removeFormat')" title="Xóa định dạng" style="font-size: 11px;">🧹</button>
+            </div>
+
+            <!-- Content Area -->
+            <div id="post-content-editor" contenteditable="true" style="min-height: 200px; max-height: 360px; overflow-y: auto; padding: 14px; color: var(--text-primary); font-size: 14px; line-height: 1.6; outline: none; background: rgba(0,0,0,0.15);" placeholder="Nhập nội dung bài viết chi tiết ở đây..."></div>
+          </div>
+          <textarea id="post-content" style="display: none;"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ảnh minh họa</label>
+          <!-- Upload Zone -->
+          <div id="post-image-upload-zone" style="border: 2px dashed var(--border-color); border-radius: var(--radius-lg); padding: 24px; text-align: center; cursor: pointer; transition: all 0.25s; background: rgba(0,0,0,0.15);" onclick="document.getElementById('post-image-file').click()" ondragover="event.preventDefault(); this.style.borderColor='var(--color-primary)'; this.style.background='rgba(99,102,241,0.08)'" ondragleave="this.style.borderColor='var(--border-color)'; this.style.background='rgba(0,0,0,0.15)'" ondrop="handlePostImgDrop(event)">
+            <div id="post-img-placeholder" style="pointer-events: none;">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5" style="margin: 0 auto 8px; display: block;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <p style="color: var(--text-muted); font-size: 14px; margin: 0;">Kéo thả ảnh vào đây hoặc <span style="color: var(--color-primary); font-weight: 600;">nhấp để chọn file</span></p>
+              <p style="color: var(--text-secondary); font-size: 12px; margin: 6px 0 0;">PNG, JPG, WEBP · Tối đa 5MB</p>
+            </div>
+            <div id="post-img-preview" style="display: none; pointer-events: none;">
+              <img id="post-img-preview-img" src="" alt="Preview" style="max-height: 180px; border-radius: var(--radius-md); object-fit: contain;">
+              <p id="post-img-preview-name" style="font-size: 12px; color: var(--text-muted); margin-top: 8px;"></p>
+            </div>
+          </div>
+          <input type="file" id="post-image-file" accept="image/*" style="display: none;">
+          <button type="button" id="post-img-remove" style="display: none; margin-top: 8px; background: none; border: 1px solid var(--color-danger); color: var(--color-danger); border-radius: var(--radius-md); padding: 4px 12px; font-size: 12px; cursor: pointer;" onclick="clearPostImage()">🗑 Xóa ảnh</button>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+          <button type="button" class="btn btn-ghost" id="btn-close-post-modal">Hủy</button>
+          <button type="submit" class="btn btn-primary" id="btn-submit-post">Đăng bài</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script type="module" src="../src/js/auth.js"></script>
+  <script type="module" src="../src/js/articles.js"></script>
+
+  <script type="module">
+    // === Layout Switch (Guest vs Logged-in) ===
+    import { auth, db, doc, getDoc, onAuthStateChanged } from '../src/js/firebaseConfig.js';
+    const publicNavbar = document.getElementById('public-navbar');
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('main-content');
+    const mobileToggle = document.getElementById('mobile-menu-toggle');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    const btnCreatePost = document.getElementById('btn-create-post');
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        publicNavbar.style.display = 'none';
+        sidebar.style.display = 'flex';
+        mobileToggle.style.display = 'flex';
+        if (window.innerWidth > 768) {
+          mainContent.style.marginLeft = 'var(--sidebar-width)';
+        }
+
+        // Show create post button for all logged in users
+        btnCreatePost.style.display = 'inline-flex';
+      } else {
+        publicNavbar.style.display = 'flex';
+        sidebar.style.display = 'none';
+        mobileToggle.style.display = 'none';
+        mainContent.style.marginLeft = '0';
+        mainContent.style.paddingTop = 'calc(var(--navbar-height) + var(--space-2xl))';
+        btnCreatePost.style.display = 'none';
+      }
+    });
+
+    mobileToggle.addEventListener('click', () => { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); });
+    sidebarOverlay.addEventListener('click', () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); });
+  </script>
+
+  <!-- Image Upload & MS Word Editor Handlers (non-module, global scope) -->
+  <script>
+    // ===== MS WORD EDITOR EXEC COMMAND =====
+    function execCmd(command, value = null) {
+      document.execCommand(command, false, value);
+      const editor = document.getElementById('post-content-editor');
+      if (editor) editor.focus();
+    }
+
+    // ===== MODAL FORM IMAGE UPLOAD =====
+    function clearPostImage() {
+      document.getElementById('post-image-file').value = '';
+      document.getElementById('post-img-preview').style.display = 'none';
+      document.getElementById('post-img-placeholder').style.display = 'block';
+      document.getElementById('post-img-remove').style.display = 'none';
+      const zone = document.getElementById('post-image-upload-zone');
+      zone.style.borderColor = 'var(--border-color)';
+      zone.style.background = 'rgba(0,0,0,0.15)';
+    }
+
+    function showPostImagePreview(file) {
+      if (!file || !file.type.startsWith('image/')) return;
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Ảnh quá lớn! Vui lòng chọn ảnh dưới 5MB.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        document.getElementById('post-img-preview-img').src = e.target.result;
+        document.getElementById('post-img-preview-name').textContent = file.name + ' (' + (file.size / 1024).toFixed(0) + ' KB)';
+        document.getElementById('post-img-preview').style.display = 'block';
+        document.getElementById('post-img-placeholder').style.display = 'none';
+        document.getElementById('post-img-remove').style.display = 'inline-block';
+        const zone = document.getElementById('post-image-upload-zone');
+        zone.style.borderColor = 'var(--color-primary)';
+        zone.style.background = 'rgba(99,102,241,0.06)';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handlePostImgDrop(event) {
+      event.preventDefault();
+      const file = event.dataTransfer.files[0];
+      if (file) {
+        document.getElementById('post-image-file').files = event.dataTransfer.files;
+        showPostImagePreview(file);
+      }
+      const zone = document.getElementById('post-image-upload-zone');
+      zone.style.borderColor = 'var(--border-color)';
+      zone.style.background = 'rgba(0,0,0,0.15)';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Modal image file input change
+      const postImgFile = document.getElementById('post-image-file');
+      if (postImgFile) {
+        postImgFile.addEventListener('change', (e) => {
+          showPostImagePreview(e.target.files[0]);
+        });
+      }
+
+      // ===== QUICK COMPOSER IMAGE UPLOAD =====
+      const composerFile = document.getElementById('composer-image-file');
+      if (composerFile) {
+        composerFile.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          if (file.size > 5 * 1024 * 1024) {
+            alert('Ảnh quá lớn! Vui lòng chọn ảnh dưới 5MB.');
+            return;
+          }
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            document.getElementById('composer-img-preview-img').src = ev.target.result;
+            document.getElementById('composer-img-preview').style.display = 'block';
+            // Update label text to show file selected
+            const label = document.getElementById('composer-img-label');
+            label.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Đã chọn ảnh';
+            label.style.borderColor = 'var(--color-success, #10b981)';
+            label.style.color = 'var(--color-success, #10b981)';
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      // Clear modal images when form resets
+      const formCreate = document.getElementById('form-create-post');
+      if (formCreate) {
+        formCreate.addEventListener('reset', clearPostImage);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi tiết báo cáo - Safe School</title>
+  <link rel="stylesheet" href="../src/css/reset.css">
+  <link rel="stylesheet" href="../src/css/style.css">
+  <style>
+    .report-detail-card {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--gradient-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: var(--space-3xl);
+      backdrop-filter: blur(12px);
+    }
+
+    .report-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-lg);
+      margin-bottom: var(--space-2xl);
+      flex-wrap: wrap;
+    }
+
+    .report-code {
+      font-family: monospace;
+      font-size: var(--font-size-2xl);
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .report-section {
+      margin-bottom: var(--space-xl);
+      padding-bottom: var(--space-xl);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .report-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .report-section-title {
+      font-size: var(--font-size-sm);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: var(--space-md);
+      font-weight: 600;
+    }
+
+    .report-field {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+
+    .report-field-label {
+      min-width: 140px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+    }
+
+    .report-field-value {
+      color: var(--text-primary);
+      flex: 1;
+    }
+
+    .report-media {
+      width: 100%;
+      max-height: 400px;
+      object-fit: contain;
+      border-radius: var(--radius-md);
+      background: var(--bg-tertiary);
+      margin-top: var(--space-sm);
+    }
+
+    .status-actions {
+      display: flex;
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 768px) {
+      .report-field { flex-direction: column; gap: 4px; }
+      .report-field-label { min-width: unset; }
+      .report-header { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout" id="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="sidebar-logo-text">
+          Safe School
+          <span>Admin Portal</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section-title">QUẢN LÝ CHUNG</div>
+      <nav class="sidebar-nav">
+        <a href="../admin/dashboard.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </a>
+        <a href="blogs.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          Bài tuyên truyền
+        </a>
+        <a href="report.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Gửi Báo cáo
+        </a>
+        <a href="report-sos.html" class="sidebar-link text-danger">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-danger)"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Báo cáo khẩn cấp
+        </a>
+      </nav>
+
+                              <div class="sidebar-section-title">QUẢN LÝ</div>
+      <nav class="sidebar-nav">
+        <a href="users.html" class="sidebar-link" id="nav-users-management" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Quản lý Người dùng
+        </a>
+        <a href="chat-management.html" class="sidebar-link" id="nav-chat-management" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Quản lý Chat
+        </a>
+      </nav>
+
+      <div class="sidebar-section-title">CÁ NHÂN</div>
+      <nav class="sidebar-nav">
+        <a href="profile.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Hồ sơ cá nhân
+        </a>
+      </nav>
+
+      <div class="sidebar-section-title">NGÔN NGỮ / LANGUAGE</div>
+      <div style="padding: 0 var(--space-md); margin-bottom: var(--space-md);">
+        <select class="sidebar-lang-select" id="sidebar-language-select" style="width: 100%; padding: 8px 10px; border-radius: var(--radius-md); background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 13px; cursor: pointer; outline: none;">
+          <option value="vi" style="background: var(--bg-card); color: var(--text-primary);">🇻🇳 Tiếng Việt</option>
+          <option value="en" style="background: var(--bg-card); color: var(--text-primary);">🇺🇸 English</option>
+          <option value="zh" style="background: var(--bg-card); color: var(--text-primary);">🇨🇳 中文</option>
+          <option value="ko" style="background: var(--bg-card); color: var(--text-primary);">🇰🇷 한국어</option>
+          <option value="es" style="background: var(--bg-card); color: var(--text-primary);">🇪🇸 Español</option>
+          <option value="pt" style="background: var(--bg-card); color: var(--text-primary);">🇵🇹 Português</option>
+          <option value="ru" style="background: var(--bg-card); color: var(--text-primary);">🇷🇺 Русский</option>
+          <option value="ja" style="background: var(--bg-card); color: var(--text-primary);">🇯🇵 日本語</option>
+          <option value="tl" style="background: var(--bg-card); color: var(--text-primary);">🇵🇭 Tagalog</option>
+        </select>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-avatar" id="user-avatar-initial">U</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name" id="sidebar-user-name">Đang tải...</div>
+            <div class="sidebar-user-role" id="sidebar-user-role">---</div>
+          </div>
+          <button class="btn-icon" id="btn-logout" title="Đăng xuất">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="page-header flex items-center justify-between">
+        <div>
+          <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <h1 class="page-title">Chi tiết Báo cáo</h1>
+          <p class="page-subtitle">Xem thông tin chi tiết và cập nhật trạng thái</p>
+        </div>
+        <a href="../admin/dashboard.html" class="btn btn-ghost btn-sm">← Quay lại Dashboard</a>
+      </header>
+
+      <div class="report-detail-card animate-fade-in-up" id="report-card">
+        <div class="text-center" style="padding: 60px 0;">
+          <div class="spinner spinner-lg" style="margin: 0 auto;"></div>
+          <p style="margin-top: 15px; color: var(--text-muted);">Đang tải dữ liệu...</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script type="module">
+    import { auth, db, signOut, doc, getDoc, updateDoc, collection, onAuthStateChanged, serverTimestamp } from '../src/js/firebaseConfig.js';
+
+    // === UI Elements ===
+    const sidebar = document.getElementById('sidebar');
+    const mobileToggle = document.getElementById('mobile-menu-toggle');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    const btnLogout = document.getElementById('btn-logout');
+
+    mobileToggle.addEventListener('click', () => { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); });
+    sidebarOverlay.addEventListener('click', () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); });
+
+    // === Auth ===
+    let currentUserRole = '';
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          document.getElementById('sidebar-user-name').textContent = userData.fullName;
+          document.getElementById('user-avatar-initial').textContent = userData.fullName.charAt(0).toUpperCase();
+          const roleMap = { student: 'Học sinh', teacher: 'Giáo viên', parent: 'Phụ huynh', counselor: 'Tham vấn viên' };
+          document.getElementById('sidebar-user-role').textContent = roleMap[userData.role] || 'Khách';
+          currentUserRole = userData.role;
+        }
+        loadReport();
+      } else {
+        window.location.href = '../auth/sign-in.html';
+      }
+    });
+
+    btnLogout.addEventListener('click', async () => {
+      await signOut(auth);
+      window.location.href = '../index.html';
+    });
+
+    // === Toast ===
+    function showToast(type, title, message) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.innerHTML = `<div class="toast-content"><div class="toast-title">${title}</div><div class="toast-message">${message}</div></div>`;
+      container.appendChild(toast);
+      setTimeout(() => { toast.classList.add('removing'); setTimeout(() => toast.remove(), 300); }, 4000);
+    }
+
+    // === Load Report ===
+    const urlParams = new URLSearchParams(window.location.search);
+    const reportId = urlParams.get('id');
+
+    async function loadReport() {
+      const card = document.getElementById('report-card');
+
+      if (!reportId) {
+        card.innerHTML = `<div class="text-center" style="padding: 60px;"><h3>Không tìm thấy báo cáo</h3><p style="margin-top: 10px;"><a href="../admin/dashboard.html" class="btn btn-primary btn-sm">Quay lại Dashboard</a></p></div>`;
+        return;
+      }
+
+      try {
+        const docSnap = await getDoc(doc(db, 'reports', reportId));
+        if (!docSnap.exists()) {
+          card.innerHTML = `<div class="text-center" style="padding: 60px;"><h3>Báo cáo không tồn tại</h3><p style="margin-top: 10px;"><a href="../admin/dashboard.html" class="btn btn-primary btn-sm">Quay lại Dashboard</a></p></div>`;
+          return;
+        }
+
+        const r = docSnap.data();
+        
+        // Format date
+        let dateStr = '---';
+        if (r.createdAt && r.createdAt.toDate) {
+          const d = r.createdAt.toDate();
+          dateStr = d.toLocaleDateString('vi-VN') + ' lúc ' + d.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
+        }
+
+        // Type mapping
+        const typeMap = {
+          'physical': 'Bạo lực thể chất',
+          'verbal': 'Bạo lực ngôn từ / Tinh thần',
+          'cyber': 'Bắt nạt trực tuyến (Cyberbullying)',
+          'sexual': 'Quấy rối tình dục',
+          'other': 'Khác',
+          'SOS': 'Khẩn cấp (SOS)'
+        };
+        let typeText = r.isSOS ? '🚨 Khẩn cấp (SOS)' : (typeMap[r.type] || r.type || 'Không xác định');
+
+        // Status mapping
+        let statusText = r.status === 'pending' ? 'Chờ xử lý' : (r.status === 'resolved' ? 'Đã giải quyết' : r.status);
+        let statusClass = r.status === 'pending' ? 'badge-warning' : 'badge-success';
+        if (r.isSOS && r.status === 'pending') statusClass = 'badge-danger';
+
+        // Sender
+        let senderHtml = r.isAnonymous ? '<em>Ẩn danh</em>' : (r.senderName || r.senderUid || 'Không rõ');
+
+        // Media
+        let mediaHtml = '';
+        if (r.mediaUrl) {
+          if (r.mediaUrl.match(/\.(mp4|webm|mov)/i)) {
+            mediaHtml = `<video src="${r.mediaUrl}" controls class="report-media"></video>`;
+          } else {
+            mediaHtml = `<img src="${r.mediaUrl}" alt="Bằng chứng" class="report-media">`;
+          }
+        } else {
+          mediaHtml = '<p style="color: var(--text-muted); font-style: italic;">Không có tệp đính kèm</p>';
+        }
+
+        card.innerHTML = `
+          <div class="report-header">
+            <div>
+              <div class="report-code">${r.reportCode || 'N/A'}</div>
+              <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: 4px;">${dateStr}</p>
+            </div>
+            <span class="badge ${statusClass}" style="font-size: var(--font-size-md); padding: 8px 16px;">${statusText}</span>
+          </div>
+
+          <div class="report-section">
+            <div class="report-section-title">Thông tin chung</div>
+            <div class="report-field">
+              <span class="report-field-label">Loại sự việc:</span>
+              <span class="report-field-value">${typeText}</span>
+            </div>
+            <div class="report-field">
+              <span class="report-field-label">Người gửi:</span>
+              <span class="report-field-value">${senderHtml}</span>
+            </div>
+            ${r.location ? `<div class="report-field"><span class="report-field-label">Vị trí GPS:</span><span class="report-field-value">${r.location}</span></div>` : ''}
+            ${r.severity ? `<div class="report-field"><span class="report-field-label">Mức độ:</span><span class="report-field-value">${r.severity}</span></div>` : ''}
+            ${r.affectedCount ? `<div class="report-field"><span class="report-field-label">Số người ảnh hưởng:</span><span class="report-field-value">${r.affectedCount}</span></div>` : ''}
+          </div>
+
+          <div class="report-section">
+            <div class="report-section-title">Mô tả sự việc</div>
+            <p class="report-field-value" style="line-height: 1.8;">${r.description || 'Không có mô tả.'}</p>
+          </div>
+
+          <div class="report-section">
+            <div class="report-section-title">Tệp đính kèm</div>
+            ${mediaHtml}
+          </div>
+
+          <!-- Status Section -->
+          ${(() => {
+            const isAuthorized = ['teacher', 'counselor', 'admin'].includes(currentUserRole);
+            if (isAuthorized) {
+              return `
+                <div class="report-section" id="status-section">
+                  <div class="report-section-title">Cập nhật trạng thái (Dành cho Người có thẩm quyền)</div>
+                  <div class="status-actions">
+                    <button class="btn btn-primary btn-sm" id="btn-resolve" ${r.status === 'resolved' ? 'disabled style="opacity: 0.5"' : ''}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                      Đánh dấu đã giải quyết
+                    </button>
+                    <button class="btn btn-ghost btn-sm" id="btn-reopen" ${r.status === 'pending' ? 'disabled style="opacity: 0.5"' : ''}>
+                      Mở lại báo cáo
+                    </button>
+                  </div>
+                </div>
+              `;
+            } else {
+              return `
+                <div class="report-section" id="status-section">
+                  <div class="report-section-title">Trạng thái giải quyết</div>
+                  <p style="color: var(--text-muted); font-size: var(--font-size-sm); font-style: italic;">
+                    🔒 Chỉ có người có thẩm quyền (Giáo viên / Tham vấn viên / BQL) mới có quyền cập nhật trạng thái giải quyết báo cáo.
+                  </p>
+                </div>
+              `;
+            }
+          })()}
+        `;
+
+        // Status update handlers (only for authorized users)
+        const isAuthorized = ['teacher', 'counselor', 'admin'].includes(currentUserRole);
+        if (isAuthorized) {
+          const btnResolve = document.getElementById('btn-resolve');
+          const btnReopen = document.getElementById('btn-reopen');
+
+          if (btnResolve) {
+            btnResolve.addEventListener('click', async () => {
+              try {
+                await updateDoc(doc(db, 'reports', reportId), { status: 'resolved', resolvedAt: serverTimestamp() });
+                showToast('success', 'Thành công', 'Đã cập nhật trạng thái báo cáo.');
+                loadReport(); // Reload
+              } catch (e) { showToast('error', 'Lỗi', 'Không thể cập nhật trạng thái.'); }
+            });
+          }
+
+          if (btnReopen) {
+            btnReopen.addEventListener('click', async () => {
+              try {
+                await updateDoc(doc(db, 'reports', reportId), { status: 'pending' });
+                showToast('success', 'Thành công', 'Đã mở lại báo cáo.');
+                loadReport();
+              } catch (e) { showToast('error', 'Lỗi', 'Không thể cập nhật trạng thái.'); }
+            });
+          }
+        }
+
+      } catch (error) {
+        console.error('Lỗi tải báo cáo:', error);
+        card.innerHTML = `<div class="text-center" style="padding: 60px;"><h3>Lỗi tải dữ liệu</h3><p style="color: var(--text-muted);">${error.message}</p></div>`;
+      }
+    }
+  </script>
+</body>
+</html>

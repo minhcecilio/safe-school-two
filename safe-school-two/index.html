@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Safe School - Hệ thống An toàn Học đường, phòng chống bạo lực học đường. Báo cáo, tuyên truyền và bảo vệ học sinh.">
+  <title>Safe School - An toàn Học đường</title>
+  <link rel="stylesheet" href="src/css/reset.css">
+  <link rel="stylesheet" href="src/css/style.css">
+  <style>
+    /* ===== LANDING PAGE SPECIFIC STYLES ===== */
+    .landing-page {
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Background decorative orbs */
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .bg-orb-1 { width: 500px; height: 500px; background: var(--color-primary); top: -100px; right: -100px; }
+    .bg-orb-2 { width: 400px; height: 400px; background: var(--color-accent); bottom: -100px; left: -100px; }
+    .bg-orb-3 { width: 300px; height: 300px; background: var(--color-danger); top: 40%; left: 50%; }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: calc(var(--navbar-height) + var(--space-2xl)) var(--space-lg) var(--space-3xl);
+    }
+
+    .hero-content {
+      max-width: 720px;
+      animation: fadeInUp 0.8s ease;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 8px 20px;
+      background: rgba(108, 92, 231, 0.12);
+      border: 1px solid rgba(108, 92, 231, 0.25);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      color: var(--color-primary-light);
+      margin-bottom: var(--space-xl);
+    }
+
+    .hero-badge svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .hero-title {
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: var(--space-lg);
+      color: var(--text-primary);
+    }
+
+    .hero-subtitle {
+      font-size: var(--font-size-md);
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: var(--space-2xl);
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    /* Features Section */
+    .features {
+      padding: var(--space-4xl) 0;
+    }
+
+    .features-header {
+      text-align: center;
+      margin-bottom: var(--space-3xl);
+    }
+
+    .features-header h2 {
+      margin-bottom: var(--space-md);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--space-xl);
+    }
+
+    .feature-card {
+      background: var(--gradient-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: var(--space-2xl);
+      backdrop-filter: blur(12px);
+      transition: all var(--transition-base);
+      animation: fadeInUp 0.6s ease both;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-card);
+      border-color: var(--border-color-hover);
+    }
+
+    .feature-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--space-lg);
+    }
+
+    .feature-icon svg {
+      width: 28px;
+      height: 28px;
+      color: #fff;
+    }
+
+    .feature-card h3 {
+      margin-bottom: var(--space-sm);
+      font-size: var(--font-size-lg);
+    }
+
+    .feature-card p {
+      font-size: var(--font-size-sm);
+    }
+
+    /* CTA Section */
+    .cta-section {
+      padding: var(--space-4xl) 0;
+      text-align: center;
+    }
+
+    .cta-card {
+      background: var(--gradient-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: var(--space-4xl) var(--space-2xl);
+      backdrop-filter: blur(12px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at center, var(--color-danger-light), transparent 60%);
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .cta-card h2 {
+      position: relative;
+      margin-bottom: var(--space-md);
+    }
+
+    .cta-card p {
+      position: relative;
+      margin-bottom: var(--space-2xl);
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-card .sos-btn {
+      position: relative;
+    }
+
+    /* Footer */
+    .footer {
+      padding: var(--space-2xl) 0;
+      border-top: 1px solid var(--border-color);
+      text-align: center;
+    }
+
+    .footer p {
+      font-size: var(--font-size-sm);
+      color: var(--text-muted);
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-xl);
+      margin-top: var(--space-md);
+    }
+
+    .footer-links a {
+      font-size: var(--font-size-sm);
+      color: var(--text-muted);
+      transition: color var(--transition-fast);
+    }
+
+    .footer-links a:hover {
+      color: var(--color-primary-light);
+    }
+
+    @media (max-width: 768px) {
+      .hero { padding-top: calc(var(--navbar-height) + var(--space-xl)); }
+      .hero-actions { flex-direction: column; width: 100%; }
+      .hero-actions .btn { width: 100%; }
+      .features-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Orbs -->
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+
+  <div class="landing-page">
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+      <a href="index.html" class="navbar-brand">
+        <!-- Shield icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="url(#shieldGrad)"/>
+          <defs>
+            <linearGradient id="shieldGrad" x1="4" y1="2" x2="20" y2="22">
+              <stop offset="0%" stop-color="#6C5CE7"/>
+              <stop offset="100%" stop-color="#00D2D3"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="text-gradient">Safe School</span>
+      </a>
+      <div class="navbar-actions" style="display: flex; align-items: center; gap: 10px;">
+        <select class="sidebar-lang-select" id="sidebar-language-select" style="padding: 6px 10px; border-radius: var(--radius-md); background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 13px; cursor: pointer; outline: none;">
+          <option value="vi" style="background: var(--bg-card); color: var(--text-primary);">🇻🇳 Tiếng Việt</option>
+          <option value="en" style="background: var(--bg-card); color: var(--text-primary);">🇺🇸 English</option>
+          <option value="zh" style="background: var(--bg-card); color: var(--text-primary);">🇨🇳 中文</option>
+          <option value="ko" style="background: var(--bg-card); color: var(--text-primary);">🇰🇷 한국어</option>
+          <option value="es" style="background: var(--bg-card); color: var(--text-primary);">🇪🇸 Español</option>
+          <option value="pt" style="background: var(--bg-card); color: var(--text-primary);">🇵🇹 Português</option>
+          <option value="ru" style="background: var(--bg-card); color: var(--text-primary);">🇷🇺 Русский</option>
+          <option value="ja" style="background: var(--bg-card); color: var(--text-primary);">🇯🇵 日本語</option>
+          <option value="tl" style="background: var(--bg-card); color: var(--text-primary);">🇵🇭 Tagalog</option>
+        </select>
+        <a href="auth/sign-in.html" class="btn btn-ghost btn-sm" id="btn-nav-signin">Đăng nhập</a>
+        <a href="auth/sign-up.html" class="btn btn-primary btn-sm" id="btn-nav-signup">Đăng ký</a>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          An toàn • Tin cậy • Bảo mật
+        </div>
+        <h1 class="hero-title">
+          Bảo vệ <span class="text-gradient">An toàn</span><br>Học đường cho mọi người
+        </h1>
+        <p class="hero-subtitle">
+          Hệ thống báo cáo và phòng chống bạo lực học đường. Nơi mọi tiếng nói được lắng nghe, mọi hành vi bạo lực được ngăn chặn kịp thời.
+        </p>
+        <div class="hero-actions">
+          <a href="auth/sign-up.html" class="btn btn-primary btn-lg" id="btn-hero-signup">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            Đăng ký tài khoản
+          </a>
+          <a href="pages/report-sos.html" class="sos-btn" id="btn-hero-sos">
+            🚨 Báo cáo khẩn cấp
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+      <div class="container">
+        <div class="features-header">
+          <h2>Tính năng <span class="text-gradient">nổi bật</span></h2>
+          <p>Hệ thống toàn diện giúp bảo vệ an toàn cho mọi học sinh</p>
+        </div>
+        <div class="features-grid stagger">
+          <!-- Feature 1: Báo cáo BLHD -->
+          <div class="feature-card" id="feature-report">
+            <div class="feature-icon" style="background: var(--gradient-primary);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10,9 9,9 8,9"/></svg>
+            </div>
+            <h3>Báo cáo bạo lực học đường</h3>
+            <p>Gửi báo cáo chi tiết kèm bằng chứng, ẩn danh hoặc công khai. Mỗi báo cáo được cấp mã theo dõi riêng.</p>
+          </div>
+
+          <!-- Feature 2: SOS -->
+          <div class="feature-card" id="feature-sos">
+            <div class="feature-icon" style="background: var(--gradient-danger);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <h3>Báo cáo khẩn cấp SOS</h3>
+            <p>Gửi báo cáo nhanh không cần đăng nhập. Chia sẻ vị trí trực tiếp để hỗ trợ kịp thời trong trường hợp nguy hiểm.</p>
+          </div>
+
+          <!-- Feature 3: Bài tuyên truyền -->
+          <div class="feature-card" id="feature-blogs">
+            <div class="feature-icon" style="background: var(--gradient-success);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </div>
+            <h3>Bài tuyên truyền</h3>
+            <p>Đọc và chia sẻ bài viết về phòng chống bạo lực học đường, an toàn mạng, sức khỏe tâm lý và pháp luật.</p>
+          </div>
+
+          <!-- Feature 4: Tư vấn tâm lý -->
+          <div class="feature-card" id="feature-chat" onclick="window.location.href='pages/chat.html'" style="cursor: pointer;">
+            <div class="feature-icon" style="background: linear-gradient(135deg, #a8c0ff, #3f2b96);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <h3>Tư vấn tâm lý trực tuyến</h3>
+            <p>Trò chuyện bảo mật 1-1 với tham vấn viên tâm lý chuyên nghiệp. Giúp giải tỏa căng thẳng và tháo gỡ áp lực học đường.</p>
+          </div>
+
+          <!-- Feature 5: Quản lý hồ sơ -->
+          <div class="feature-card" id="feature-profile">
+            <div class="feature-icon" style="background: linear-gradient(135deg, #FDCB6E, #E17055);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <h3>Quản lý hồ sơ cá nhân</h3>
+            <p>Xem và cập nhật thông tin cá nhân dễ dàng. Bảo mật thông tin với xác minh email và số điện thoại.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA SOS Section -->
+    <section class="cta-section">
+      <div class="container">
+        <div class="cta-card">
+          <h2>Bạn đang gặp <span class="text-gradient" style="background: var(--gradient-danger); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">nguy hiểm</span>?</h2>
+          <p>Đừng ngại lên tiếng. Gửi báo cáo khẩn cấp ngay — không cần đăng nhập, hệ thống sẽ thông báo đến giáo viên và ban giám hiệu ngay lập tức.</p>
+          <a href="pages/report-sos.html" class="sos-btn" id="btn-cta-sos">
+            🚨 Gửi báo cáo khẩn cấp ngay
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <p>© 2026 Safe School — Hệ thống An toàn Học đường. Bảo vệ quyền lợi mọi học sinh.</p>
+        <div class="footer-links">
+          <a href="#">Điều khoản sử dụng</a>
+          <a href="#">Chính sách bảo mật</a>
+          <a href="#">Liên hệ hỗ trợ</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script type="module" src="src/js/auth.js"></script>
+  <script type="module" src="src/js/script.js"></script>
+</body>
+</html>

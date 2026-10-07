@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Tư vấn tâm lý học đường - Safe School. Kết nối bảo mật với tham vấn viên chuyên nghiệp.">
+  <title>Tư vấn tâm lý - Safe School</title>
+  <link rel="stylesheet" href="../src/css/reset.css">
+  <link rel="stylesheet" href="../src/css/style.css">
+  <style>
+    .chat-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      height: calc(100vh - var(--navbar-height) - var(--space-xl) * 2);
+      max-height: 800px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+    }
+
+    /* Conversations List */
+    .chat-sidebar {
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    .chat-sidebar-header {
+      padding: var(--space-lg);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .chat-sidebar-title {
+      font-size: var(--font-size-md);
+      font-weight: 700;
+    }
+
+    .conversations-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-sm);
+    }
+
+    .conversation-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-md);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: background var(--transition-fast);
+      margin-bottom: 4px;
+    }
+
+    .conversation-item:hover, .conversation-item.active {
+      background: var(--bg-glass-hover);
+    }
+
+    .conversation-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: var(--font-size-md);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .conversation-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .conversation-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .conversation-name {
+      font-weight: 600;
+      font-size: var(--font-size-sm);
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .conversation-last-msg {
+      font-size: var(--font-size-xs);
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+
+    /* Main Chat Window */
+    .chat-window {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-card);
+    }
+
+    .chat-header {
+      padding: var(--space-md) var(--space-lg);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .chat-header-user {
+      font-weight: 700;
+      font-size: var(--font-size-md);
+    }
+
+    .chat-header-status {
+      font-size: var(--font-size-xs);
+      color: var(--color-success);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: var(--space-lg);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .message-bubble {
+      max-width: 70%;
+      padding: 12px 16px;
+      border-radius: 18px;
+      font-size: var(--font-size-sm);
+      line-height: 1.5;
+      word-break: break-word;
+      position: relative;
+    }
+
+    .message-bubble.sent {
+      align-self: flex-end;
+      background: var(--color-primary);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message-bubble.received {
+      align-self: flex-start;
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border-color);
+    }
+
+    .message-time {
+      font-size: 10px;
+      opacity: 0.7;
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    .chat-input-area {
+      padding: var(--space-md) var(--space-lg);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      gap: var(--space-md);
+      align-items: center;
+    }
+
+    .chat-input-area .form-input {
+      flex: 1;
+      border-radius: var(--radius-full);
+      padding: 12px 20px;
+    }
+
+    .chat-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--text-muted);
+      text-align: center;
+      padding: var(--space-2xl);
+    }
+
+    @media (max-width: 768px) {
+      .chat-layout { grid-template-columns: 1fr; height: calc(100vh - 120px); }
+      .chat-sidebar { display: flex; }
+      .chat-sidebar.hidden-mobile { display: none; }
+      .chat-window.hidden-mobile { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout" id="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="sidebar-logo-text">Safe School<span>Hệ thống</span></div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../admin/dashboard.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </a>
+        <a href="blogs.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          Bài tuyên truyền
+        </a>
+        <a href="chat.html" class="sidebar-link active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Tư vấn tâm lý 💬
+        </a>
+        <a href="report.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Gửi Báo cáo
+        </a>
+        <a href="report-sos.html" class="sidebar-link text-danger">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-danger)"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Báo cáo khẩn cấp
+        </a>
+      </nav>
+                              <div class="sidebar-section-title">QUẢN LÝ</div>
+      <nav class="sidebar-nav">
+        <a href="users.html" class="sidebar-link" id="nav-users-management" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Quản lý Người dùng
+        </a>
+        <a href="chat-management.html" class="sidebar-link" id="nav-chat-management" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Quản lý Chat
+        </a>
+      </nav>
+
+      <div class="sidebar-section-title">CÁ NHÂN</div>
+      <nav class="sidebar-nav">
+        <a href="profile.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Hồ sơ cá nhân
+        </a>
+      </nav>
+
+      <div class="sidebar-section-title">NGÔN NGỮ / LANGUAGE</div>
+      <div style="padding: 0 var(--space-md); margin-bottom: var(--space-md);">
+        <select class="sidebar-lang-select" id="sidebar-language-select" style="width: 100%; padding: 8px 10px; border-radius: var(--radius-md); background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 13px; cursor: pointer; outline: none;">
+          <option value="vi" style="background: var(--bg-card); color: var(--text-primary);">🇻🇳 Tiếng Việt</option>
+          <option value="en" style="background: var(--bg-card); color: var(--text-primary);">🇺🇸 English</option>
+          <option value="zh" style="background: var(--bg-card); color: var(--text-primary);">🇨🇳 中文</option>
+          <option value="ko" style="background: var(--bg-card); color: var(--text-primary);">🇰🇷 한국어</option>
+          <option value="es" style="background: var(--bg-card); color: var(--text-primary);">🇪🇸 Español</option>
+          <option value="pt" style="background: var(--bg-card); color: var(--text-primary);">🇵🇹 Português</option>
+          <option value="ru" style="background: var(--bg-card); color: var(--text-primary);">🇷🇺 Русский</option>
+          <option value="ja" style="background: var(--bg-card); color: var(--text-primary);">🇯🇵 日本語</option>
+          <option value="tl" style="background: var(--bg-card); color: var(--text-primary);">🇵🇭 Tagalog</option>
+        </select>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-avatar" id="user-avatar-initial">U</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name" id="sidebar-user-name">Đang tải...</div>
+            <div class="sidebar-user-role" id="sidebar-user-role">---</div>
+          </div>
+          <button class="btn-icon" id="btn-logout" title="Đăng xuất">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <main class="main-content" id="main-content">
+      <header class="page-header flex items-center justify-between">
+        <div>
+          <button class="mobile-menu-toggle" id="mobile-menu-toggle" style="display: none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <h1 class="page-title">Tư vấn Tâm lý Học đường</h1>
+          <p class="page-subtitle">Kết nối bảo mật với tham vấn viên tâm lý chuyên nghiệp</p>
+        </div>
+      </header>
+
+      <div class="chat-layout animate-fade-in-up">
+        <!-- Sidebar Conversations -->
+        <div class="chat-sidebar" id="chat-sidebar">
+          <div class="chat-sidebar-header">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span class="chat-sidebar-title">Cuộc hội thoại</span>
+              <div style="display: flex; gap: 6px;">
+                <button class="btn-inbox" id="btn-friend-requests" title="Hộp lời mời kết bạn">
+                  🤝
+                  <span class="inbox-badge" id="friend-req-badge" style="display: none;">0</span>
+                </button>
+                <button class="btn-inbox" id="btn-inbox" title="Hộp yêu cầu nhóm">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+                  <span class="inbox-badge" id="inbox-badge" style="display: none;">0</span>
+                </button>
+              </div>
+            </div>
+            <div class="chat-sidebar-header-row" style="flex-wrap: wrap;">
+              <button class="btn btn-primary btn-sm" id="btn-new-chat" style="flex: 1;">+ Tư vấn mới</button>
+              <button class="btn btn-secondary btn-sm" id="btn-open-add-friend" title="Tìm & Kết bạn">
+                👤+ Kết bạn
+              </button>
+              <button class="btn btn-secondary btn-sm btn-create-group" id="btn-new-group" title="Tạo nhóm">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Tạo nhóm
+              </button>
+            </div>
+          </div>
+
+          <!-- Tabs for Conversations vs Friends -->
+          <div class="chat-sidebar-tabs" style="display: flex; border-bottom: 1px solid var(--border-color); background: rgba(0,0,0,0.1);">
+            <button class="chat-tab-btn active" id="tab-convs" style="flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-primary); font-weight: 600; font-size: 13px; cursor: pointer; border-bottom: 2px solid var(--color-primary);">💬 Hội thoại</button>
+            <button class="chat-tab-btn" id="tab-friends" style="flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; font-size: 13px; cursor: pointer; border-bottom: 2px solid transparent;">👥 Bạn bè (<span id="friends-count-badge">0</span>)</button>
+          </div>
+
+          <div class="conversations-list" id="conversations-list">
+            <div class="text-center" style="padding: 30px 10px; color: var(--text-muted);">Đang tải danh sách...</div>
+          </div>
+
+          <div class="conversations-list hidden" id="friends-list" style="display: none;">
+            <div class="text-center" style="padding: 30px 10px; color: var(--text-muted);">Chưa có bạn bè nào.</div>
+          </div>
+        </div>
+
+        <!-- Chat Window -->
+        <div class="chat-window" id="chat-window">
+          <div class="chat-empty" id="chat-empty-state">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 16px; opacity: 0.5;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <h3>Tư vấn Tâm lý An toàn & Bảo mật</h3>
+            <p style="max-width: 400px; margin-top: 8px;">Chọn một cuộc hội thoại ở danh sách bên trái hoặc bấm "Cuộc tư vấn mới" để bắt đầu trò chuyện.</p>
+          </div>
+
+          <div id="chat-active-state" class="hidden" style="display: flex; flex-direction: column; height: 100%;">
+            <div class="chat-header">
+              <button class="btn btn-ghost btn-sm" id="btn-back-conversations" style="display: none;">← Danh sách</button>
+              <div class="conversation-avatar" id="active-chat-avatar">U</div>
+              <div style="flex: 1; min-width: 0;">
+                <div class="chat-header-user" id="active-chat-name">Tên người dùng</div>
+                <div class="chat-header-status" id="active-chat-status">🟢 Trực tuyến</div>
+              </div>
+              <div class="chat-header-actions" style="display: flex; align-items: center; gap: 6px;">
+                <button class="btn-icon-chat" id="btn-call-audio" title="Gọi thoại mô phỏng">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                </button>
+                <button class="btn-icon-chat" id="btn-call-video" title="Gọi video mô phỏng">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                </button>
+                <button class="btn-icon-chat" id="btn-chat-theme" title="Đổi hình nền đoạn chat">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="10"/><path d="M12 2a7 7 0 0 0 0 14 7 7 0 0 0 0-14z"/></svg>
+                </button>
+                <button class="btn-icon-chat" id="btn-group-info" title="Thông tin & Quản lý Nhóm" style="display: none;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="chat-messages" id="chat-messages">
+              <!-- Messages rendered here -->
+            </div>
+
+            <!-- Reply Preview Bar -->
+            <div id="reply-preview-bar" class="reply-preview-bar hidden">
+              <div class="reply-preview-content">
+                <div class="reply-title">Đang trả lời <span id="reply-target-name">...</span></div>
+                <div class="reply-text" id="reply-target-text">...</div>
+              </div>
+              <button type="button" class="btn-cancel-reply" id="btn-cancel-reply" title="Hủy trả lời">×</button>
+            </div>
+
+            <!-- Emoji Picker Popup -->
+            <div id="emoji-picker-popup" class="emoji-picker-popup hidden">
+              <span>😀</span><span>😂</span><span>😍</span><span>❤️</span><span>👍</span>
+              <span>😭</span><span>😮</span><span>😢</span><span>😡</span><span>🔥</span>
+              <span>🥺</span><span>🎉</span><span>🙏</span><span>👏</span><span>✨</span>
+            </div>
+
+            <form class="chat-input-area" id="chat-form">
+              <button type="button" class="btn-icon-chat" id="btn-toggle-emoji" title="Chọn emoji">😀</button>
+              <input type="text" class="form-input" id="message-input" placeholder="Nhập tin nhắn..." autocomplete="off" required>
+              <button type="submit" class="btn btn-primary" style="border-radius: var(--radius-full); padding: 12px 20px;">Gửi</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="app-footer" style="margin-top: var(--space-xl);">
+        <div class="app-footer-inner">
+          <div class="app-footer-bottom">
+            <span class="app-footer-copyright">© 2026 Safe School — Hệ thống An toàn Học đường</span>
+            <div class="app-footer-socials">
+              <a href="#" title="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+              <a href="#" title="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Modal: Choose Counselor (1-on-1) -->
+  <div id="modal-counselor" class="modal-overlay hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: var(--space-2xl); width: 90%; max-width: 480px;">
+      <h3 style="margin-bottom: var(--space-md);">Chọn Tham vấn viên</h3>
+      <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-bottom: var(--space-md);">Danh sách các chuyên gia tư vấn tâm lý sẵn sàng hỗ trợ bạn:</p>
+
+      <div class="form-group" style="margin-bottom: var(--space-lg); background: var(--bg-input); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+        <label class="form-checkbox" style="margin: 0;">
+          <input type="checkbox" id="chat-is-anonymous">
+          <span style="font-size: var(--font-size-sm); font-weight: 500;">Tư vấn ẩn danh (Tham vấn viên sẽ không biết tên bạn)</span>
+        </label>
+      </div>
+
+      <div id="counselors-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; margin-bottom: var(--space-xl);">
+        <!-- Counselors list -->
+      </div>
+
+      <div style="text-align: right;">
+        <button class="btn btn-ghost" id="btn-close-modal">Hủy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Create Group -->
+  <div id="modal-group" class="modal-overlay hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: var(--space-2xl); width: 90%; max-width: 520px;">
+      <h3 style="margin-bottom: var(--space-md);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22" style="vertical-align: middle; margin-right: 6px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Tạo nhóm Tư vấn
+      </h3>
+      <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-bottom: var(--space-lg);">Tạo nhóm để tư vấn với nhiều thành viên. Bạn có thể mời tham vấn viên hoặc học sinh khác.</p>
+
+      <div class="form-group">
+        <label class="form-label" for="group-name-input">Tên nhóm <span class="required">*</span></label>
+        <input type="text" class="form-input" id="group-name-input" placeholder="Ví dụ: Nhóm hỗ trợ lớp 11A2" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Thêm thành viên</label>
+        <input type="text" class="members-search-input" id="members-search-input" placeholder="Nhập tên học sinh hoặc tham vấn viên..." autocomplete="off">
+        <div class="members-search-results" id="members-search-results"></div>
+        <div class="members-selected" id="members-selected"></div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+        <button class="btn btn-ghost" id="btn-close-group-modal">Hủy</button>
+        <button class="btn btn-primary" id="btn-create-group-submit">Tạo nhóm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Request Inbox -->
+  <div id="modal-inbox" class="modal-overlay hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: var(--space-2xl); width: 90%; max-width: 520px;">
+      <h3 style="margin-bottom: var(--space-md);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22" style="vertical-align: middle; margin-right: 6px;"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+        Hộp yêu cầu tham gia nhóm
+      </h3>
+      <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-bottom: var(--space-lg);">Các lời mời vào nhóm đang chờ bạn xử lý:</p>
+
+      <div id="invites-list" style="max-height: 400px; overflow-y: auto;">
+        <div style="text-align: center; padding: 30px; color: var(--text-muted);">Đang tải...</div>
+      </div>
+
+      <div style="text-align: right; margin-top: var(--space-lg);">
+        <button class="btn btn-ghost" id="btn-close-inbox-modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Hộp Lời Mời Kết Bạn -->
+  <div id="modal-friend-requests" class="modal-overlay hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: var(--space-2xl); width: 90%; max-width: 520px;">
+      <h3 style="margin-bottom: var(--space-md);">
+        🤝 Hộp Lời Mời Kết Bạn
+      </h3>
+      <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-bottom: var(--space-lg);">Các lời mời kết bạn đang chờ bạn phản hồi:</p>
+
+      <div id="friend-requests-list" style="display: flex; flex-direction: column; gap: 10px; max-height: 380px; overflow-y: auto;">
+        <div style="text-align: center; padding: 30px; color: var(--text-muted);">Đang tải...</div>
+      </div>
+
+      <div style="text-align: right; margin-top: var(--space-lg);">
+        <button class="btn btn-ghost" id="btn-close-friend-req-modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Tìm & Thêm Bạn Bè -->
+  <div id="modal-add-friend" class="modal-overlay hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: var(--space-2xl); width: 90%; max-width: 520px;">
+      <h3 style="margin-bottom: var(--space-md);">🔍 Tìm & Thêm Bạn Bè</h3>
+      <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-bottom: var(--space-md);">Nhập tên người dùng để tìm kiếm và gửi lời mời kết bạn:</p>
+
+      <div class="form-group">
+        <input type="text" class="form-input" id="friend-search-input" placeholder="Nhập tên người dùng..." autocomplete="off">
+      </div>
+
+      <div id="friend-search-results" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; margin-top: 12px;">
+      </div>
+
+      <div style="text-align: right; margin-top: var(--space-lg);">
+        <button class="btn btn-ghost" id="btn-close-add-friend-modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Call Simulation (Audio / Video) -->
+  <div id="modal-call" class="modal-overlay hidden">
+    <div class="call-modal-card">
+      <video id="call-video-preview" autoplay muted playsinline class="hidden" style="width: 100%; max-height: 220px; border-radius: var(--radius-lg); object-fit: cover; margin-bottom: 16px; background: #000; border: 1px solid var(--border-color);"></video>
+      <div class="call-avatar-wrapper" id="call-avatar-container">
+        <div class="call-avatar" id="call-user-avatar">U</div>
+        <div class="call-pulse-ring"></div>
+      </div>
+      <h3 class="call-user-name" id="call-user-name">Đang kết nối...</h3>
+      <p class="call-status-text" id="call-status-text">Đang xin quyền truy cập thiết bị...</p>
+      <div class="call-timer" id="call-timer" style="display: none;">00:00</div>
+
+      <div class="call-controls">
+        <button class="btn-call-action btn-mute" id="btn-call-mute" title="Tắt / Mở Mic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </button>
+        <button class="btn-call-action btn-end" id="btn-call-end" title="Tắt cuộc gọi">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.61 7.46 7 12 7s8.66 1.61 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.1-.7-.28-.79-.73-1.68-1.36-2.66-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Chat Theme / Background Picker -->
+  <div id="modal-chat-theme" class="modal-overlay hidden">
+    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: var(--space-2xl); width: 90%; max-width: 460px;">
+      <h3 style="margin-bottom: var(--space-md);">🎨 Đổi hình nền đoạn chat</h3>
+      <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-bottom: var(--space-lg);">Chọn màu sắc hoặc chủ đề bạn yêu thích:</p>
+
+      <div class="theme-options-grid">
+        <div class="theme-option active" data-theme="default">
+          <div class="theme-preview theme-preview-default"></div>
+          <span>Mặc định</span>
+        </div>
+        <div class="theme-option" data-theme="sunset">
+          <div class="theme-preview theme-preview-sunset"></div>
+          <span>Hoàng hôn</span>
+        </div>
+        <div class="theme-option" data-theme="ocean">
+          <div class="theme-preview theme-preview-ocean"></div>
+          <span>Đại dương</span>
+        </div>
+        <div class="theme-option" data-theme="neon">
+          <div class="theme-preview theme-preview-neon"></div>
+          <span>Cyber Neon</span>
+        </div>
+        <div class="theme-option" data-theme="lavender">
+          <div class="theme-preview theme-preview-lavender"></div>
+          <span>Oải hương</span>
+        </div>
+      </div>
+
+      <div style="text-align: right; margin-top: var(--space-xl);">
+        <button class="btn btn-ghost" id="btn-close-theme-modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Group Info & Settings -->
+  <div id="modal-group-info" class="modal-overlay hidden">
+    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: var(--space-2xl); width: 90%; max-width: 520px; max-height: 90vh; overflow-y: auto;">
+      <h3 style="margin-bottom: var(--space-md);">⚙️ Thông tin & Quản lý Nhóm</h3>
+
+      <!-- Group Avatar & Name Edit -->
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: var(--space-xl);">
+        <div class="conversation-avatar" id="group-info-avatar" style="width: 72px; height: 72px; font-size: 28px;">👥</div>
+        <div style="width: 100%;">
+          <label class="form-label">Tên nhóm</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" class="form-input" id="input-group-name-edit" placeholder="Tên nhóm...">
+            <button class="btn btn-primary btn-sm" id="btn-save-group-name">Lưu</button>
+          </div>
+        </div>
+        <div style="width: 100%;">
+          <label class="form-label">Tải lên ảnh đại diện nhóm mới</label>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="file" class="form-input" id="input-group-avatar-file" accept="image/*">
+            <button class="btn btn-secondary btn-sm" id="btn-save-group-avatar" style="flex-shrink: 0;">Tải ảnh lên</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Members List -->
+      <h4 style="font-size: var(--font-size-md); font-weight: 700; margin-bottom: var(--space-sm);">Thành viên nhóm (<span id="group-members-count">0</span>)</h4>
+      <div id="group-members-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 240px; overflow-y: auto;">
+        <div style="text-align: center; padding: 20px; color: var(--text-muted);">Đang tải thành viên...</div>
+      </div>
+
+      <div style="text-align: right; margin-top: var(--space-xl);">
+        <button class="btn btn-ghost" id="btn-close-group-info-modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messenger Message Context Menu -->
+  <div id="msg-context-menu" class="msg-context-menu hidden">
+    <div class="context-reactions-bar">
+      <button class="btn-reaction" data-emoji="❤️">❤️</button>
+      <button class="btn-reaction" data-emoji="👍">👍</button>
+      <button class="btn-reaction" data-emoji="😂">😂</button>
+      <button class="btn-reaction" data-emoji="😮">😮</button>
+      <button class="btn-reaction" data-emoji="😢">😢</button>
+      <button class="btn-reaction" data-emoji="😡">😡</button>
+    </div>
+    <div class="context-menu-divider"></div>
+    <div class="context-menu-items">
+      <button class="context-item" id="ctx-reply">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>
+        Trả lời
+      </button>
+      <button class="context-item" id="ctx-edit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Chỉnh sửa tin nhắn
+      </button>
+      <button class="context-item text-danger" id="ctx-unsend">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        Thu hồi tin nhắn
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal: Incoming Call -->
+  <div id="modal-incoming-call" class="modal-overlay hidden">
+    <div class="call-modal-card">
+      <div class="call-avatar-wrapper">
+        <div class="call-avatar" id="incoming-caller-avatar">U</div>
+        <div class="call-pulse-ring"></div>
+      </div>
+      <h3 class="call-user-name" id="incoming-caller-name">Người dùng</h3>
+      <p class="call-status-text" id="incoming-call-type">Cuộc gọi đến...</p>
+
+      <div class="call-controls" style="gap: 30px; margin-top: 16px;">
+        <button class="btn-call-action" id="btn-accept-call" style="background: #2ecc71; color: #fff;" title="Nghe cuộc gọi">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="26" height="26"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
+        </button>
+        <button class="btn-call-action btn-end" id="btn-reject-call" title="Từ chối">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.61 7.46 7 12 7s8.66 1.61 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.1-.7-.28-.79-.73-1.68-1.36-2.66-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="../src/js/chat.js"></script>
+</body>
+</html>

@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gửi báo cáo bạo lực học đường - Safe School</title>
+  <link rel="stylesheet" href="../src/css/reset.css">
+  <link rel="stylesheet" href="../src/css/style.css">
+  <style>
+    .form-section {
+      margin-bottom: var(--space-2xl);
+      padding-bottom: var(--space-xl);
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .form-section-title {
+      font-size: var(--font-size-xl);
+      color: var(--text-primary);
+      margin-bottom: var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    
+    .file-upload-zone {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: var(--space-2xl);
+      text-align: center;
+      transition: all var(--transition-base);
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.02);
+    }
+    
+    .file-upload-zone:hover, .file-upload-zone.dragover {
+      border-color: var(--color-primary);
+      background: rgba(108, 92, 231, 0.05);
+    }
+    
+    .file-list {
+      margin-top: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    
+    .file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-sm) var(--space-md);
+      background: var(--bg-input);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-sm);
+    }
+
+    .success-screen {
+      text-align: center;
+      padding: var(--space-4xl) 0;
+    }
+
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      background: var(--color-success-light);
+      color: var(--color-success);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto var(--space-xl);
+    }
+
+    .report-code {
+      font-size: var(--font-size-2xl);
+      font-family: monospace;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--color-primary-light);
+      background: var(--bg-input);
+      padding: var(--space-md) var(--space-xl);
+      border-radius: var(--radius-md);
+      display: inline-block;
+      margin: var(--space-lg) 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="sidebar-logo-text">Safe School<span>Hệ thống</span></div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../admin/dashboard.html" class="sidebar-link">Dashboard</a>
+        <a href="blogs.html" class="sidebar-link">Bài tuyên truyền</a>
+        <a href="chat.html" class="sidebar-link">Tư vấn tâm lý 💬</a>
+        <a href="report.html" class="sidebar-link active">Gửi Báo cáo</a>
+        <a href="report-sos.html" class="sidebar-link text-danger">Báo cáo khẩn cấp</a>
+      </nav>
+                              <div class="sidebar-section-title">QUẢN LÝ</div>
+      <nav class="sidebar-nav">
+        <a href="users.html" class="sidebar-link" id="nav-users-management" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Quản lý Người dùng
+        </a>
+        <a href="chat-management.html" class="sidebar-link" id="nav-chat-management" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Quản lý Chat
+        </a>
+      </nav>
+
+      <div class="sidebar-section-title">CÁ NHÂN</div>
+      <nav class="sidebar-nav">
+        <a href="profile.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Hồ sơ cá nhân
+        </a>
+      </nav>
+
+      <div class="sidebar-section-title">NGÔN NGỮ / LANGUAGE</div>
+      <div style="padding: 0 var(--space-md); margin-bottom: var(--space-md);">
+        <select class="sidebar-lang-select" id="sidebar-language-select" style="width: 100%; padding: 8px 10px; border-radius: var(--radius-md); background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 13px; cursor: pointer; outline: none;">
+          <option value="vi" style="background: var(--bg-card); color: var(--text-primary);">🇻🇳 Tiếng Việt</option>
+          <option value="en" style="background: var(--bg-card); color: var(--text-primary);">🇺🇸 English</option>
+          <option value="zh" style="background: var(--bg-card); color: var(--text-primary);">🇨🇳 中文</option>
+          <option value="ko" style="background: var(--bg-card); color: var(--text-primary);">🇰🇷 한국어</option>
+          <option value="es" style="background: var(--bg-card); color: var(--text-primary);">🇪🇸 Español</option>
+          <option value="pt" style="background: var(--bg-card); color: var(--text-primary);">🇵🇹 Português</option>
+          <option value="ru" style="background: var(--bg-card); color: var(--text-primary);">🇷🇺 Русский</option>
+          <option value="ja" style="background: var(--bg-card); color: var(--text-primary);">🇯🇵 日本語</option>
+          <option value="tl" style="background: var(--bg-card); color: var(--text-primary);">🇵🇭 Tagalog</option>
+        </select>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-avatar" id="user-avatar-initial">U</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name" id="sidebar-user-name">Đang tải...</div>
+            <div class="sidebar-user-role" id="sidebar-user-role">---</div>
+          </div>
+          <button class="btn-icon" id="btn-logout" title="Đăng xuất">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="page-header flex items-center justify-between">
+        <div>
+          <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <h1 class="page-title">Gửi báo cáo bạo lực học đường</h1>
+          <p class="page-subtitle">Thông tin của bạn sẽ được bảo mật tuyệt đối</p>
+        </div>
+      </header>
+
+      <div class="card animate-fade-in-up" id="form-card" style="max-width: 800px;">
+        <form id="report-form">
+          <!-- 1. Tùy chọn ẩn danh -->
+          <div class="form-section">
+            <h2 class="form-section-title">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              Định danh người gửi
+            </h2>
+            <div class="form-group">
+              <label class="form-checkbox">
+                <input type="checkbox" id="is-anonymous">
+                <span>Gửi báo cáo ẩn danh (Thông tin cá nhân của bạn sẽ không hiển thị với người tiếp nhận)</span>
+              </label>
+            </div>
+            
+            <!-- Hiển thị thông tin nếu không ẩn danh -->
+            <div id="sender-info" class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); margin-top: var(--space-md);">
+              <div class="form-group">
+                <label class="form-label">Họ và tên</label>
+                <input type="text" class="form-input" id="sender-name" disabled>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email liên hệ</label>
+                <input type="text" class="form-input" id="sender-email" disabled>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Thông tin sự việc -->
+          <div class="form-section">
+            <h2 class="form-section-title">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Chi tiết sự việc
+            </h2>
+            
+            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
+              <div class="form-group" id="group-incident-type">
+                <label class="form-label" for="incident-type">Loại sự việc <span class="required">*</span></label>
+                <select class="form-select" id="incident-type" required>
+                  <option value="" disabled selected>Chọn loại sự việc</option>
+                  <option value="physical">Bạo lực thể chất</option>
+                  <option value="verbal">Bạo lực ngôn từ / Đe dọa</option>
+                  <option value="cyber">Bắt nạt trực tuyến (Cyberbullying)</option>
+                  <option value="isolation">Tẩy chay / Cô lập</option>
+                  <option value="other">Khác</option>
+                </select>
+                <span class="form-error">Vui lòng chọn loại sự việc</span>
+              </div>
+              
+              <div class="form-group" id="group-incident-date">
+                <label class="form-label" for="incident-date">Thời gian xảy ra <span class="required">*</span></label>
+                <input type="date" class="form-input" id="incident-date" required>
+                <span class="form-error">Vui lòng chọn thời gian</span>
+              </div>
+            </div>
+
+            <div class="form-group" id="group-incident-location">
+              <label class="form-label" for="incident-location">Địa điểm xảy ra <span class="required">*</span></label>
+              <input type="text" class="form-input" id="incident-location" placeholder="Vd: Cổng trường, Lớp 10A1, Facebook..." required>
+              <span class="form-error">Vui lòng nhập địa điểm</span>
+            </div>
+
+            <div class="form-group" id="group-incident-desc">
+              <label class="form-label" for="incident-desc">Mô tả chi tiết <span class="required">*</span></label>
+              <textarea class="form-input" id="incident-desc" rows="6" placeholder="Mô tả chi tiết sự việc đã xảy ra..." required></textarea>
+              <span class="form-error">Vui lòng mô tả chi tiết (ít nhất 20 ký tự)</span>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="involved-people">Những người liên quan (Người thực hiện, nạn nhân, nhân chứng)</label>
+              <textarea class="form-input" id="involved-people" rows="2" placeholder="Tên, lớp (nếu biết)"></textarea>
+            </div>
+          </div>
+
+          <!-- 3. Bằng chứng -->
+          <div class="form-section" style="border-bottom: none; padding-bottom: 0;">
+            <h2 class="form-section-title">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+              Bằng chứng đính kèm
+            </h2>
+            <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-bottom: var(--space-md);">Hình ảnh, video hoặc file ghi âm (Tối đa 5 file, < 10MB/file)</p>
+            
+            <div class="file-upload-zone" id="drop-zone">
+              <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="var(--text-muted)" stroke-width="1.5" style="margin: 0 auto var(--space-sm);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <p>Kéo thả file vào đây hoặc <span style="color: var(--color-primary-light); text-decoration: underline;">Click để chọn file</span></p>
+              <input type="file" id="file-input" multiple accept="image/*,video/*,audio/*" style="display: none;">
+            </div>
+            <div class="file-list" id="file-list"></div>
+          </div>
+
+          <div class="form-actions" style="margin-top: var(--space-2xl); display: flex; justify-content: flex-end;">
+            <button type="submit" class="btn btn-primary btn-lg" id="btn-submit">
+              <span id="btn-submit-text">Gửi báo cáo</span>
+              <div class="spinner hidden" id="btn-submit-spinner" style="width: 18px; height: 18px; border-width: 2px;"></div>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Success Screen -->
+      <div class="card hidden animate-fade-in-up" id="success-screen">
+        <div class="success-screen">
+          <div class="success-icon">
+            <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <h2>Báo cáo đã được gửi thành công!</h2>
+          <p style="color: var(--text-muted); margin-top: var(--space-md);">Nhà trường đã tiếp nhận báo cáo của bạn và sẽ xử lý trong thời gian sớm nhất.</p>
+          
+          <div class="report-code" id="display-report-code">REP-XXXX</div>
+          <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-bottom: var(--space-2xl);">Vui lòng lưu lại mã này để theo dõi tiến độ xử lý.</p>
+          
+          <a href="../admin/dashboard.html" class="btn btn-primary">Quay lại Dashboard</a>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="app-footer">
+        <div class="app-footer-inner">
+          <div class="app-footer-top">
+            <div>
+              <div class="app-footer-brand">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span class="text-gradient">Safe School</span>
+              </div>
+              <p class="app-footer-desc">Hệ thống An toàn Học đường — Bảo vệ quyền lợi và sức khỏe tinh thần của mọi học sinh.</p>
+            </div>
+            <div>
+              <h4 class="app-footer-heading">Liên kết</h4>
+              <div class="app-footer-links">
+                <a href="blogs.html">Bài tuyên truyền</a>
+                <a href="chat.html">Tư vấn tâm lý</a>
+                <a href="report.html">Gửi báo cáo</a>
+              </div>
+            </div>
+            <div>
+              <h4 class="app-footer-heading">Hỗ trợ</h4>
+              <div class="app-footer-links">
+                <a href="#">Điều khoản sử dụng</a>
+                <a href="#">Chính sách bảo mật</a>
+                <a href="#">Liên hệ hỗ trợ</a>
+              </div>
+            </div>
+          </div>
+          <div class="app-footer-bottom">
+            <span class="app-footer-copyright">© 2026 Safe School — Hệ thống An toàn Học đường</span>
+            <div class="app-footer-socials">
+              <a href="#" title="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+              <a href="#" title="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>
+              <a href="#" title="Hotline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></a>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+    </main>
+  </div>
+
+  <script type="module">
+    import { auth, db, addDoc, collection, serverTimestamp, onAuthStateChanged, getDoc, doc } from '../src/js/firebaseConfig.js';
+
+    // === Layout Setup ===
+    const sidebar = document.getElementById('sidebar');
+    const mobileToggle = document.getElementById('mobile-menu-toggle');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    mobileToggle.addEventListener('click', () => { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); });
+    sidebarOverlay.addEventListener('click', () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); });
+
+    let currentUserData = null;
+    let userUid = null;
+
+    // === Authentication Setup ===
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        userUid = user.uid;
+        const userDoc = await getDoc(doc(db, 'users', userUid));
+        if (userDoc.exists()) {
+          currentUserData = userDoc.data();
+          document.getElementById('sender-name').value = currentUserData.fullName;
+          document.getElementById('sender-email').value = currentUserData.email;
+        }
+      } else {
+        window.location.href = '../auth/sign-in.html'; // Yêu cầu đăng nhập để gửi báo cáo thường
+      }
+    });
+
+    // === Form Logic ===
+    const isAnonymousCheck = document.getElementById('is-anonymous');
+    const senderInfoBlock = document.getElementById('sender-info');
+    
+    isAnonymousCheck.addEventListener('change', (e) => {
+      if(e.target.checked) {
+        senderInfoBlock.style.opacity = '0.5';
+        document.getElementById('sender-name').value = 'Ẩn danh';
+        document.getElementById('sender-email').value = 'Không hiển thị';
+      } else {
+        senderInfoBlock.style.opacity = '1';
+        document.getElementById('sender-name').value = currentUserData ? currentUserData.fullName : '';
+        document.getElementById('sender-email').value = currentUserData ? currentUserData.email : '';
+      }
+    });
+
+    // === File Upload Logic (Mock UI) ===
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const fileList = document.getElementById('file-list');
+    let selectedFiles = [];
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      handleFiles(e.dataTransfer.files);
+    });
+    fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+    function handleFiles(files) {
+      if (selectedFiles.length + files.length > 5) {
+        alert('Tối đa 5 file.');
+        return;
+      }
+      Array.from(files).forEach(file => {
+        if (file.size > 10 * 1024 * 1024) {
+          alert(`File ${file.name} vượt quá 10MB.`);
+          return;
+        }
+        selectedFiles.push(file);
+        
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        fileItem.innerHTML = `
+          <span>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 8px;"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+            ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)
+          </span>
+          <button type="button" class="btn-icon text-danger" style="padding: 4px;" onclick="this.parentElement.remove(); selectedFiles.splice(selectedFiles.indexOf(file), 1);">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        `;
+        fileList.appendChild(fileItem);
+      });
+    }
+
+    // === Submit Form ===
+    const form = document.getElementById('report-form');
+    const formCard = document.getElementById('form-card');
+    const successScreen = document.getElementById('success-screen');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      let valid = true;
+      const type = document.getElementById('incident-type').value;
+      const date = document.getElementById('incident-date').value;
+      const loc = document.getElementById('incident-location').value.trim();
+      const desc = document.getElementById('incident-desc').value.trim();
+
+      if (!type) { document.getElementById('group-incident-type').classList.add('error'); valid = false; }
+      if (!date) { document.getElementById('group-incident-date').classList.add('error'); valid = false; }
+      if (!loc) { document.getElementById('group-incident-location').classList.add('error'); valid = false; }
+      if (desc.length < 20) { document.getElementById('group-incident-desc').classList.add('error'); valid = false; }
+
+      if (!valid) {
+        form.style.animation = 'shake 0.5s ease';
+        setTimeout(() => form.style.animation = '', 500);
+        return;
+      }
+
+      // Loading
+      document.getElementById('btn-submit-text').classList.add('hidden');
+      document.getElementById('btn-submit-spinner').classList.remove('hidden');
+
+      try {
+        const reportCode = 'REP-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+        
+        let mediaUrls = [];
+        
+        // Cloudinary Upload for selected files
+        const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/unmjajhr/auto/upload';
+        const CLOUDINARY_UPLOAD_PRESET = 'safe_school_preset';
+        
+        if (selectedFiles.length > 0) {
+          if (CLOUDINARY_URL.includes('YOUR_CLOUD_NAME')) {
+            console.warn("Cloudinary not configured. Mocking upload.");
+            mediaUrls = selectedFiles.map((f, index) => `https://mock-cloudinary-url.com/sample_${index}.jpg`);
+          } else {
+             for (const file of selectedFiles) {
+               const formData = new FormData();
+               formData.append('file', file);
+               formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+               const res = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
+               const data = await res.json();
+               if (data.secure_url) mediaUrls.push(data.secure_url);
+             }
+          }
+        }
+        
+        // Push to Firestore
+        await addDoc(collection(db, 'reports'), {
+          reportCode: reportCode,
+          senderUid: userUid,
+          isAnonymous: isAnonymousCheck.checked,
+          type: type,
+          date: date,
+          location: loc,
+          description: desc,
+          involvedPeople: document.getElementById('involved-people').value.trim(),
+          mediaUrls: mediaUrls,
+          hasFiles: selectedFiles.length > 0,
+          status: 'pending',
+          createdAt: serverTimestamp()
+        });
+
+        // Show success screen
+        document.getElementById('display-report-code').textContent = reportCode;
+        formCard.classList.add('hidden');
+        successScreen.classList.remove('hidden');
+        
+      } catch (error) {
+        console.error(error);
+        alert('Có lỗi xảy ra khi gửi báo cáo, vui lòng thử lại.');
+      } finally {
+        document.getElementById('btn-submit-text').classList.remove('hidden');
+        document.getElementById('btn-submit-spinner').classList.add('hidden');
+      }
+    });
+
+    // Remove errors on input
+    document.querySelectorAll('.form-input, .form-select').forEach(input => {
+      input.addEventListener('input', () => {
+        const group = input.closest('.form-group');
+        if (group) group.classList.remove('error');
+      });
+    });
+
+  </script>
+</body>
+</html>

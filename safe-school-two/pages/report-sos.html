@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo cáo khẩn cấp (SOS) - Safe School</title>
+  <link rel="stylesheet" href="../src/css/reset.css">
+  <link rel="stylesheet" href="../src/css/style.css">
+  <!-- Leaflet.js - Free map library, no API key needed -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    /* Specific styling for SOS page */
+    .sos-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-xl);
+      position: relative;
+      background: var(--bg-primary); /* SOS bg has red hints */
+    }
+
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    /* Red danger theme */
+    .bg-orb-1 { width: 600px; height: 600px; background: var(--color-danger); top: -200px; right: -200px; }
+    .bg-orb-2 { width: 500px; height: 500px; background: #FF4757; bottom: -100px; left: -100px; }
+
+    .sos-container {
+      width: 100%;
+      max-width: 600px;
+      z-index: 1;
+      animation: pulse-danger 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse-danger {
+      0% { box-shadow: 0 0 0 0 rgba(232, 65, 24, 0.4); }
+      70% { box-shadow: 0 0 0 20px rgba(232, 65, 24, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(232, 65, 24, 0); }
+    }
+
+    .glass-card-sos {
+      background: rgba(30, 30, 40, 0.85);
+      border: 1px solid rgba(232, 65, 24, 0.5);
+      border-top: 4px solid var(--color-danger);
+      border-radius: var(--radius-xl);
+      padding: var(--space-3xl);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .sos-header {
+      text-align: center;
+      margin-bottom: var(--space-2xl);
+    }
+
+    .sos-icon-wrapper {
+      width: 80px;
+      height: 80px;
+      background: rgba(232, 65, 24, 0.15);
+      border: 2px solid var(--color-danger);
+      color: var(--color-danger);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto var(--space-lg);
+    }
+    
+    .sos-icon-wrapper svg {
+      width: 40px;
+      height: 40px;
+    }
+
+    .sos-title {
+      color: var(--color-danger);
+      font-size: var(--font-size-2xl);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: var(--space-sm);
+    }
+
+    .sos-desc {
+      color: var(--text-secondary);
+      font-size: var(--font-size-md);
+      line-height: 1.5;
+    }
+
+    .location-card {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-md);
+      margin-bottom: var(--space-xl);
+    }
+
+    .location-icon {
+      color: var(--color-info);
+      margin-top: 2px;
+    }
+
+    .location-details h4 {
+      font-size: var(--font-size-sm);
+      margin-bottom: 4px;
+    }
+    
+    .location-details p {
+      font-size: var(--font-size-sm);
+      color: var(--text-muted);
+    }
+
+    .btn-sos-submit {
+      background: var(--color-danger);
+      color: #fff;
+      border: none;
+      padding: 16px;
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-lg);
+      font-weight: 700;
+      width: 100%;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      transition: all var(--transition-base);
+    }
+    
+    .btn-sos-submit:hover {
+      background: #C23616;
+      transform: scale(1.02);
+    }
+
+    /* Success state */
+    .sos-success {
+      text-align: center;
+    }
+
+    /* Map */
+    .sos-map-container {
+      margin-bottom: var(--space-xl);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid rgba(232, 65, 24, 0.3);
+    }
+
+    #sos-map {
+      width: 100%;
+      height: 220px;
+      background: rgba(0,0,0,0.3);
+    }
+
+    .map-placeholder {
+      width: 100%;
+      height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 8px;
+      color: var(--text-muted);
+      font-size: var(--font-size-sm);
+      background: rgba(0,0,0,0.2);
+    }
+
+  </style>
+</head>
+<body>
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
+  <div class="sos-page">
+    <div class="sos-container" id="main-container">
+      <div class="glass-card-sos">
+        
+        <div id="form-view">
+          <div class="sos-header">
+            <div class="sos-icon-wrapper">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <h1 class="sos-title">Báo Cáo Khẩn Cấp</h1>
+            <p class="sos-desc">Dùng trong trường hợp bạn hoặc ai đó đang gặp nguy hiểm trực tiếp. Báo cáo sẽ được gửi ngay đến Ban Giám Hiệu và lực lượng hỗ trợ.</p>
+          </div>
+
+          <div class="location-card" id="location-card">
+            <div class="location-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div class="location-details">
+              <h4>Vị trí của bạn</h4>
+              <p id="location-text">Đang lấy vị trí...</p>
+            </div>
+            <button class="btn btn-ghost btn-sm" id="btn-get-location" style="margin-left: auto;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+            </button>
+          </div>
+
+          <!-- Map -->
+          <div class="sos-map-container">
+            <div id="sos-map">
+              <div class="map-placeholder" id="map-placeholder">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity: 0.5;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span>Đang chờ vị trí GPS...</span>
+              </div>
+            </div>
+          </div>
+
+          <form id="sos-form">
+            <div class="form-group" id="group-sos-desc">
+              <label class="form-label" for="sos-desc">Mô tả nhanh sự việc <span class="required">*</span></label>
+              <textarea class="form-input" id="sos-desc" rows="3" placeholder="Ví dụ: Đang xảy ra đánh nhau ở cổng trường phía sau..." required></textarea>
+              <span class="form-error">Vui lòng nhập mô tả nhanh</span>
+            </div>
+
+            <div class="form-group" id="group-sos-severity">
+              <label class="form-label" for="sos-severity">Mức độ nguy hiểm <span class="required">*</span></label>
+              <select class="form-select" id="sos-severity" required>
+                <option value="critical" style="color: #E84118;">🔴 Rất nguy hiểm — Có thể đe dọa tính mạng</option>
+                <option value="high" selected>🟠 Nguy hiểm — Cần can thiệp ngay</option>
+                <option value="medium">🟡 Cần hỗ trợ — Tình huống căng thẳng</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="group-sos-type">
+              <label class="form-label" for="sos-type">Loại sự việc</label>
+              <select class="form-select" id="sos-type">
+                <option value="physical">Bạo lực thể chất (đánh nhau)</option>
+                <option value="threat">Đe dọa / Tống tiền</option>
+                <option value="weapon">Có vũ khí / vật nguy hiểm</option>
+                <option value="group">Bạo lực nhóm / Đông người</option>
+                <option value="sexual">Quấy rối / Xâm hại</option>
+                <option value="other">Khác</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="group-sos-affected">
+              <label class="form-label" for="sos-affected">Số người bị ảnh hưởng (ước lượng)</label>
+              <input type="number" class="form-input" id="sos-affected" placeholder="Ví dụ: 2" min="1" max="100">
+            </div>
+
+            <div class="form-group" id="group-sos-media">
+              <label class="form-label" for="sos-media">Đính kèm ảnh/video (Tùy chọn)</label>
+              <input type="file" class="form-input" id="sos-media" accept="image/*,video/*" style="padding: 10px;">
+              <div id="media-preview" style="margin-top: 10px; text-align: center;"></div>
+            </div>
+
+            <div style="background: rgba(232, 65, 24, 0.1); border: 1px solid rgba(232, 65, 24, 0.3); border-radius: var(--radius-md); padding: var(--space-md); margin-bottom: var(--space-lg); text-align: center;">
+              <p style="font-size: var(--font-size-sm); color: var(--color-warning); margin-bottom: 4px;">Nếu tình huống nguy hiểm đến tính mạng, gọi ngay:</p>
+              <p style="font-size: var(--font-size-2xl); font-weight: 800; color: var(--color-danger);">📞 113</p>
+            </div>
+
+            <button type="submit" class="btn-sos-submit" id="btn-submit">
+              <span id="btn-submit-text">🚨 GỬI BÁO CÁO NGAY</span>
+              <div class="spinner hidden" id="btn-submit-spinner" style="width: 24px; height: 24px; border-width: 3px;"></div>
+            </button>
+            
+            <div style="text-align: center; margin-top: var(--space-lg);">
+              <a href="../index.html" class="btn btn-ghost" style="color: var(--text-muted);">Quay lại trang chủ</a>
+            </div>
+          </form>
+        </div>
+
+        <!-- Success View -->
+        <div id="success-view" class="sos-success hidden">
+          <div class="sos-icon-wrapper" style="background: var(--color-success-light); border-color: var(--color-success); color: var(--color-success);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <h2 style="font-size: var(--font-size-xl); margin-bottom: var(--space-md); color: var(--color-success);">Đã gửi cảnh báo!</h2>
+          <p class="sos-desc" style="margin-bottom: var(--space-lg);">Báo cáo khẩn cấp của bạn đã được tiếp nhận. Đội phản ứng nhanh của nhà trường đang được điều động.</p>
+
+          <div style="background: rgba(0,0,0,0.3); padding: var(--space-md); border-radius: var(--radius-md); margin-bottom: var(--space-lg);">
+            <p style="font-size: var(--font-size-xs); color: var(--text-muted); text-transform: uppercase;">Mã báo cáo của bạn</p>
+            <p style="font-family: monospace; font-size: var(--font-size-xl); font-weight: 800; color: var(--color-danger); margin-top: 4px;" id="sos-code-display">SOS-XXXX</p>
+          </div>
+          
+          <div style="background: rgba(0,0,0,0.2); padding: var(--space-md); border-radius: var(--radius-md); margin-bottom: var(--space-xl);">
+            <p style="font-size: var(--font-size-sm); color: var(--color-warning);">Nếu tình huống nguy hiểm đến tính mạng, vui lòng gọi ngay:</p>
+            <p style="font-size: var(--font-size-2xl); font-weight: 800; letter-spacing: 2px; margin-top: 8px;">113</p>
+          </div>
+
+          <a href="../index.html" class="btn btn-secondary btn-block">Trở về trang chủ</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer" style="position: relative; z-index: 2; margin-top: 0;">
+    <div class="app-footer-inner">
+      <div class="app-footer-top">
+        <div>
+          <div class="app-footer-brand">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span class="text-gradient">Safe School</span>
+          </div>
+          <p class="app-footer-desc">Hệ thống An toàn Học đường — Bảo vệ quyền lợi và sức khỏe tinh thần của mọi học sinh.</p>
+        </div>
+        <div>
+          <h4 class="app-footer-heading">Liên kết</h4>
+          <div class="app-footer-links">
+            <a href="blogs.html">Bài tuyên truyền</a>
+            <a href="chat.html">Tư vấn tâm lý</a>
+            <a href="report.html">Gửi báo cáo</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="app-footer-heading">Hỗ trợ</h4>
+          <div class="app-footer-links">
+            <a href="#">Điều khoản sử dụng</a>
+            <a href="#">Chính sách bảo mật</a>
+            <a href="#">Liên hệ hỗ trợ</a>
+          </div>
+        </div>
+      </div>
+      <div class="app-footer-bottom">
+        <span class="app-footer-copyright">© 2026 Safe School — Hệ thống An toàn Học đường</span>
+        <div class="app-footer-socials">
+          <a href="#" title="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+          <a href="#" title="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>
+          <a href="#" title="Hotline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { auth, db, addDoc, collection, serverTimestamp } from '../src/js/firebaseConfig.js';
+
+    // === Location Handling (UC6) ===
+    let currentLocation = null;
+    const locationText = document.getElementById('location-text');
+    const btnGetLocation = document.getElementById('btn-get-location');
+
+    function getLocation() {
+      locationText.textContent = "Đang xác định vị trí...";
+      locationText.style.color = "var(--color-info)";
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            currentLocation = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            locationText.textContent = `Vĩ độ: ${currentLocation.lat.toFixed(4)}, Kinh độ: ${currentLocation.lng.toFixed(4)}`;
+            locationText.style.color = "var(--color-success)";
+            // Update map
+            initMap(currentLocation.lat, currentLocation.lng);
+          },
+          (error) => {
+            console.error("Lỗi lấy vị trí:", error);
+            locationText.textContent = "Không thể lấy vị trí tự động. Vui lòng ghi rõ trong mô tả.";
+            locationText.style.color = "var(--color-warning)";
+          }
+        );
+      } else {
+        locationText.textContent = "Trình duyệt không hỗ trợ định vị.";
+        locationText.style.color = "var(--color-danger)";
+      }
+    }
+
+    // Auto-fetch location on load
+    getLocation();
+
+    btnGetLocation.addEventListener('click', (e) => {
+      e.preventDefault();
+      getLocation();
+    });
+
+    // === Map Setup ===
+    let sosMap = null;
+    let sosMarker = null;
+
+    function initMap(lat, lng) {
+      const placeholder = document.getElementById('map-placeholder');
+      if (placeholder) placeholder.remove();
+
+      if (!sosMap) {
+        sosMap = L.map('sos-map', {
+          zoomControl: true,
+          attributionControl: false
+        }).setView([lat, lng], 16);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19
+        }).addTo(sosMap);
+      } else {
+        sosMap.setView([lat, lng], 16);
+      }
+
+      if (sosMarker) {
+        sosMarker.setLatLng([lat, lng]);
+      } else {
+        const dangerIcon = L.divIcon({
+          className: '',
+          html: '<div style="width:20px;height:20px;background:var(--color-danger,#E84118);border:3px solid #fff;border-radius:50%;box-shadow:0 0 10px rgba(232,65,24,0.6);"></div>',
+          iconSize: [20, 20],
+          iconAnchor: [10, 10]
+        });
+        sosMarker = L.marker([lat, lng], { icon: dangerIcon }).addTo(sosMap);
+        sosMarker.bindPopup('<b style="color:#E84118;">📍 Vị trí của bạn</b>').openPopup();
+      }
+    }
+
+    // === Form Submission (Không cần đăng nhập) ===
+    const form = document.getElementById('sos-form');
+    const formView = document.getElementById('form-view');
+    const successView = document.getElementById('success-view');
+    const mainContainer = document.getElementById('main-container');
+    const mediaInput = document.getElementById('sos-media');
+
+    // Cloudinary Config
+    const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/unmjajhr/auto/upload';
+    const CLOUDINARY_UPLOAD_PRESET = 'safe_school_preset';
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const descInput = document.getElementById('sos-desc');
+      const desc = descInput.value.trim();
+
+      if (!desc) {
+        document.getElementById('group-sos-desc').classList.add('error');
+        form.style.animation = 'shake 0.5s ease';
+        setTimeout(() => form.style.animation = '', 500);
+        return;
+      }
+
+      document.getElementById('btn-submit-text').classList.add('hidden');
+      document.getElementById('btn-submit-spinner').classList.remove('hidden');
+
+      const severity = document.getElementById('sos-severity').value;
+      const sosType = document.getElementById('sos-type').value;
+      const affectedCount = document.getElementById('sos-affected').value || 'Không rõ';
+
+      try {
+        let mediaUrl = '';
+        
+        // Upload to Cloudinary if file exists
+        if (mediaInput.files && mediaInput.files[0]) {
+          const file = mediaInput.files[0];
+          
+          if(CLOUDINARY_URL.includes('YOUR_CLOUD_NAME')) {
+             console.warn("Cloudinary not configured. Mocking upload.");
+             mediaUrl = 'https://mock-cloudinary-url.com/sample.jpg';
+          } else {
+             const formData = new FormData();
+             formData.append('file', file);
+             formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+             
+             const res = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
+             const data = await res.json();
+             if (data.secure_url) {
+               mediaUrl = data.secure_url;
+             }
+          }
+        }
+
+        const reportCode = 'SOS-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+
+        await addDoc(collection(db, 'reports'), {
+          reportCode: reportCode,
+          senderUid: auth.currentUser ? auth.currentUser.uid : null,
+          type: 'SOS',
+          subType: sosType,
+          severity: severity === 'critical' ? '🔴 Rất nguy hiểm' : (severity === 'high' ? '🟠 Nguy hiểm' : '🟡 Cần hỗ trợ'),
+          affectedCount: affectedCount,
+          isSOS: true,
+          description: desc,
+          mediaUrl: mediaUrl,
+          location: currentLocation ? `${currentLocation.lat}, ${currentLocation.lng}` : 'Không có dữ liệu GPS',
+          status: 'pending',
+          createdAt: serverTimestamp()
+        });
+
+        // Show Success
+        document.getElementById('sos-code-display').textContent = reportCode;
+        mainContainer.style.animation = 'none'; // Stop pulse
+        formView.classList.add('hidden');
+        successView.classList.remove('hidden');
+        
+      } catch (error) {
+        console.error("Lỗi gửi SOS:", error);
+        alert("Có lỗi xảy ra! Không thể gửi báo cáo. Vui lòng gọi 113 nếu khẩn cấp.");
+      } finally {
+        document.getElementById('btn-submit-text').classList.remove('hidden');
+        document.getElementById('btn-submit-spinner').classList.add('hidden');
+      }
+    });
+
+    document.getElementById('sos-desc').addEventListener('input', () => {
+      document.getElementById('group-sos-desc').classList.remove('error');
+    });
+
+  </script>
+</body>
+</html>

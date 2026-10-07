@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Đăng nhập tài khoản Safe School">
+  <title>Đăng nhập - Safe School</title>
+  <link rel="stylesheet" href="../src/css/reset.css">
+  <link rel="stylesheet" href="../src/css/style.css">
+  <style>
+    .auth-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-xl);
+      position: relative;
+      overflow: hidden;
+    }
+    .bg-orb { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.12; pointer-events: none; z-index: -1; }
+    .bg-orb-1 { width: 500px; height: 500px; background: var(--color-primary); top: -150px; left: -100px; }
+    .bg-orb-2 { width: 400px; height: 400px; background: var(--color-accent); bottom: -100px; right: -100px; }
+
+    .auth-container { width: 100%; max-width: 440px; animation: fadeInUp 0.6s ease; }
+
+    .auth-logo {
+      display: flex; align-items: center; justify-content: center;
+      gap: var(--space-sm); margin-bottom: var(--space-2xl); text-align: center;
+    }
+    .auth-logo svg { width: 36px; height: 36px; }
+    .auth-logo span { font-size: var(--font-size-xl); font-weight: 700; }
+
+    .auth-title { text-align: center; margin-bottom: var(--space-xs); font-size: var(--font-size-2xl); }
+    .auth-subtitle { text-align: center; color: var(--text-muted); font-size: var(--font-size-sm); margin-bottom: var(--space-2xl); }
+
+    .auth-footer { text-align: center; margin-top: var(--space-xl); font-size: var(--font-size-sm); color: var(--text-muted); }
+    .auth-footer a { color: var(--color-primary-light); font-weight: 600; transition: opacity var(--transition-fast); }
+    .auth-footer a:hover { opacity: 0.8; }
+    
+    .forgot-password { text-align: right; margin-bottom: var(--space-lg); font-size: var(--font-size-sm); }
+    .forgot-password a { color: var(--color-primary-light); }
+  </style>
+</head>
+<body>
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
+  <div style="position: absolute; top: 20px; right: 20px; z-index: 100;">
+    <select class="sidebar-lang-select" id="sidebar-language-select" style="padding: 8px 12px; border-radius: var(--radius-md); background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 13px; cursor: pointer; outline: none;">
+      <option value="vi" style="background: var(--bg-card); color: var(--text-primary);">🇻🇳 Tiếng Việt</option>
+      <option value="en" style="background: var(--bg-card); color: var(--text-primary);">🇺🇸 English</option>
+      <option value="zh" style="background: var(--bg-card); color: var(--text-primary);">🇨🇳 中文</option>
+      <option value="ko" style="background: var(--bg-card); color: var(--text-primary);">🇰🇷 한국어</option>
+      <option value="es" style="background: var(--bg-card); color: var(--text-primary);">🇪🇸 Español</option>
+      <option value="pt" style="background: var(--bg-card); color: var(--text-primary);">🇵🇹 Português</option>
+      <option value="ru" style="background: var(--bg-card); color: var(--text-primary);">🇷🇺 Русский</option>
+      <option value="ja" style="background: var(--bg-card); color: var(--text-primary);">🇯🇵 日本語</option>
+      <option value="tl" style="background: var(--bg-card); color: var(--text-primary);">🇵🇭 Tagalog</option>
+    </select>
+  </div>
+
+  <div class="auth-page">
+    <div class="auth-container">
+      <!-- Logo -->
+      <a href="../index.html" class="auth-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="url(#sg)"/>
+          <defs><linearGradient id="sg" x1="4" y1="2" x2="20" y2="22"><stop offset="0%" stop-color="#6C5CE7"/><stop offset="100%" stop-color="#00D2D3"/></linearGradient></defs>
+        </svg>
+        <span class="text-gradient">Safe School</span>
+      </a>
+
+      <!-- Glass Card -->
+      <div class="glass-card">
+        <h1 class="auth-title">Chào mừng trở lại</h1>
+        <p class="auth-subtitle">Đăng nhập để tiếp tục vào hệ thống</p>
+
+        <form id="signin-form" novalidate>
+          <!-- Email -->
+          <div class="form-group" id="group-email">
+            <label class="form-label" for="email">Tên đăng nhập / Email <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <input type="email" class="form-input" id="email" placeholder="Nhập email của bạn" required autocomplete="email">
+            </div>
+            <span class="form-error" id="error-email">Vui lòng nhập email</span>
+          </div>
+
+          <!-- Mật khẩu -->
+          <div class="form-group" id="group-password">
+            <label class="form-label" for="password">Mật khẩu <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <input type="password" class="form-input" id="password" placeholder="Nhập mật khẩu" required autocomplete="current-password">
+              <button type="button" class="input-action" id="toggle-password" aria-label="Hiện mật khẩu">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <span class="form-error" id="error-password">Vui lòng nhập mật khẩu</span>
+          </div>
+
+          <div class="form-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg);">
+            <!-- Ghi nhớ đăng nhập -->
+            <label class="form-checkbox" style="margin: 0;">
+              <input type="checkbox" id="remember-me">
+              <span>Ghi nhớ đăng nhập</span>
+            </label>
+            
+            <div class="forgot-password" style="margin: 0;">
+              <a href="forgot-password.html" id="link-forgot-password">Quên mật khẩu?</a>
+            </div>
+          </div>
+          
+          <div id="general-error" class="form-error" style="margin-bottom: var(--space-md); text-align: center; justify-content: center;"></div>
+
+          <!-- Nút đăng nhập -->
+          <button type="submit" class="btn btn-primary btn-block btn-lg" id="btn-signin">
+            <span id="btn-signin-text">Đăng nhập</span>
+            <div class="spinner hidden" id="btn-signin-spinner"></div>
+          </button>
+        </form>
+
+        <div style="display: flex; align-items: center; margin: 20px 0; color: var(--text-muted);">
+          <div style="flex: 1; height: 1px; background: var(--border-color);"></div>
+          <span style="padding: 0 12px; font-size: 13px;">hoặc</span>
+          <div style="flex: 1; height: 1px; background: var(--border-color);"></div>
+        </div>
+
+        <button type="button" class="btn btn-secondary btn-block btn-lg" id="btn-google-signin" style="display: flex; align-items: center; justify-content: center; gap: 10px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-color); color: var(--text-primary); cursor: pointer;">
+          <svg width="20" height="20" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.28v3.15C3.25 21.3 7.31 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.28C.46 8.21 0 10.05 0 12s.46 3.79 1.28 5.42l4-3.15z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.7 1.28 6.58l4 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+          </svg>
+          Đăng nhập bằng Google
+        </button>
+
+        <div class="auth-footer">
+          Chưa có tài khoản? <a href="sign-up.html" id="link-signup">Đăng ký ngay</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script type="module">
+    import { auth, signInWithEmailAndPassword, googleProvider, signInWithPopup, signInWithRedirect, db, doc, getDoc, setDoc, serverTimestamp } from '../src/js/firebaseConfig.js';
+
+    // === DOM Elements ===
+    const form = document.getElementById('signin-form');
+    const btnText = document.getElementById('btn-signin-text');
+    const btnSpinner = document.getElementById('btn-signin-spinner');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const generalError = document.getElementById('general-error');
+
+    // === Lịch sử đăng nhập thất bại (Mock) ===
+    let failedAttempts = 0;
+    let lockoutTime = 0;
+
+    // === Toggle hiện/ẩn mật khẩu ===
+    document.getElementById('toggle-password').addEventListener('click', () => {
+      passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+    });
+
+    // === Validation functions ===
+    function showFieldError(groupId, show) {
+      const group = document.getElementById(groupId);
+      if (show) { group.classList.add('error'); }
+      else { group.classList.remove('error'); }
+    }
+
+    // === Toast notification ===
+    function showToast(type, title, message) {
+      const container = document.getElementById('toast-container');
+      const icons = {
+        success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+        error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
+      };
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.innerHTML = `
+        <div class="toast-icon">${icons[type] || icons.success}</div>
+        <div class="toast-content"><div class="toast-title">${title}</div><div class="toast-message">${message}</div></div>
+        <button class="toast-close" onclick="this.parentElement.classList.add('removing'); setTimeout(() => this.parentElement.remove(), 300);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>`;
+      container.appendChild(toast);
+      setTimeout(() => { toast.classList.add('removing'); setTimeout(() => toast.remove(), 300); }, 5000);
+    }
+
+    // === Form Submit (Đăng nhập) ===
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      // Kiểm tra khóa tài khoản
+      if (Date.now() < lockoutTime) {
+        const remainingMinutes = Math.ceil((lockoutTime - Date.now()) / 60000);
+        generalError.style.display = 'block';
+        generalError.textContent = `Tài khoản bị khóa tạm thời, vui lòng thử lại sau ${remainingMinutes} phút.`;
+        return;
+      }
+
+      let valid = true;
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      generalError.style.display = 'none';
+
+      if (!email) { showFieldError('group-email', true); valid = false; } else { showFieldError('group-email', false); }
+      if (!password) { showFieldError('group-password', true); valid = false; } else { showFieldError('group-password', false); }
+
+      if (!valid) {
+        form.style.animation = 'shake 0.5s ease';
+        setTimeout(() => form.style.animation = '', 500);
+        return;
+      }
+
+      // Hiển thị loading
+      btnText.classList.add('hidden');
+      btnSpinner.classList.remove('hidden');
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        failedAttempts = 0; // Reset số lần sai
+        
+        showToast('success', 'Đăng nhập thành công', 'Đang chuyển hướng đến Dashboard...');
+        setTimeout(() => { window.location.href = '../admin/dashboard.html'; }, 1500);
+
+      } catch (error) {
+        failedAttempts++;
+        let errMsg = 'Tên đăng nhập hoặc mật khẩu không đúng.'; // BR-LOGIN-02
+        
+        if (failedAttempts >= 5) {
+          lockoutTime = Date.now() + 30 * 60 * 1000; // Khóa 30 phút
+          errMsg = 'Tài khoản bị khoá tạm thời do đăng nhập sai nhiều lần. Vui lòng thử lại sau 30 phút.';
+        } else if (error.code === 'auth/network-request-failed') {
+          errMsg = 'Lỗi kết nối mạng. Vui lòng kiểm tra và thử lại.';
+        }
+
+        generalError.style.display = 'block';
+        generalError.textContent = errMsg;
+        
+        form.style.animation = 'shake 0.5s ease';
+        setTimeout(() => form.style.animation = '', 500);
+      } finally {
+        btnText.classList.remove('hidden');
+        btnSpinner.classList.add('hidden');
+      }
+    });
+
+    // Google Sign-In Handler
+    const btnGoogleSignIn = document.getElementById('btn-google-signin');
+    if (btnGoogleSignIn) {
+      btnGoogleSignIn.addEventListener('click', async () => {
+        try {
+          let user = null;
+          try {
+            const result = await signInWithPopup(auth, googleProvider);
+            user = result.user;
+          } catch (popupErr) {
+            console.warn('Popup login failed, attempting fallback:', popupErr);
+            if (popupErr.code === 'auth/popup-blocked' || popupErr.code === 'auth/cancelled-popup-request') {
+              showToast('info', 'Thông báo', 'Cửa sổ đăng nhập bị chặn. Đang chuyển hướng sang trang đăng nhập Google...');
+              await signInWithRedirect(auth, googleProvider);
+              return;
+            } else {
+              throw popupErr;
+            }
+          }
+          
+          if (user) {
+            const userRef = doc(db, 'users', user.uid);
+            const userSnap = await getDoc(userRef);
+            if (!userSnap.exists()) {
+              await setDoc(userRef, {
+                fullName: user.displayName || 'Người dùng Google',
+                email: user.email || '',
+                avatar: user.photoURL || '',
+                role: 'student',
+                language: 'vi',
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
+              });
+            }
+
+            showToast('success', 'Đăng nhập Google thành công', 'Đang chuyển hướng...');
+            setTimeout(() => { window.location.href = '../admin/dashboard.html'; }, 1200);
+          }
+        } catch (error) {
+          console.error('Google Sign In Error:', error);
+          let msg = 'Không thể đăng nhập bằng tài khoản Google.';
+          if (error.code === 'auth/popup-closed-by-user') {
+            msg = 'Bạn đã đóng cửa sổ đăng nhập Google.';
+          } else if (error.code === 'auth/unauthorized-domain') {
+            msg = 'Domain hiện tại chưa được cấp phép trong Firebase Console. Vui lòng thêm domain vào Authorized Domains.';
+          } else if (error.code === 'auth/operation-not-allowed') {
+            msg = 'Tính năng Google Sign-In chưa được bật trong Firebase Auth Console.';
+          }
+          showToast('error', 'Thất bại', msg);
+        }
+      });
+    }
+
+    // Xóa trạng thái lỗi khi sửa input
+    [emailInput, passwordInput].forEach(input => {
+      input.addEventListener('input', () => {
+        showFieldError(`group-${input.id}`, false);
+        generalError.style.display = 'none';
+      });
+    });
+  </script>
+</body>
+</html>
